@@ -33,3 +33,17 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Assignment;
 };
+
+const validateAssignment = (data) => {
+  var schema = Joi.object({
+    subject: Joi.string().required(),
+    summary: Joi.string().required(),
+    assignee: Joi.string().min(3).max(25).empty(),
+    status: Joi.int().required(),
+  });
+  return schema.validate(data);
+};
+
+module.export = {
+  validateAssignment
+};

@@ -8,9 +8,9 @@ async function auth(req, res, next) {
     if (!token) return res.status(400).json(response(401, "error", "Token not found", {}));
     try {
         let user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-        req.user = await db.User.findById({ where: { id: user._id } });
+        req.user = await db.User.findOne({ where: { id: user._id } });
     } catch (error) {
-        res.status(400).json(response(401, "error", "Token invalid", {}));
+        return res.status(400).json(response(401, "error", "Token invalid", {}));
     }
     next();
 }

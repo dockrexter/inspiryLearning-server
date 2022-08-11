@@ -38,7 +38,8 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
-function validateUser(data) {
+
+const validateUser = (data) => {
   var schema = Joi.object({
     firstName: Joi.string().min(3).max(12).required(),
     lastName: Joi.string().min(3).max(12).empty(),
@@ -50,7 +51,7 @@ function validateUser(data) {
   return schema.validate(data);
 }
 
-function validateUserLogin(data) {
+const validateUserLogin = (data) => {
   var schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
@@ -58,5 +59,17 @@ function validateUserLogin(data) {
   return schema.validate(data);
 }
 
-module.exports.validateUser = validateUser;
-module.exports.validateUserLogin = validateUserLogin;
+const validateUserDetails = (data) => {
+  var schema = Joi.object({
+    firstName: Joi.string().min(3).max(12).required(),
+    lastName: Joi.string().min(3).max(12).empty(),
+    phone: Joi.string().allow(""),
+  });
+  return schema.validate(data);
+}
+
+module.export = {
+  validateUser,
+  validateUserLogin,
+  validateUserDetails
+};
