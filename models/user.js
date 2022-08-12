@@ -68,8 +68,6 @@ const validateUserDetails = (data) => {
   return schema.validate(data);
 }
 
-module.export = {
-  validateUser,
-  validateUserLogin,
-  validateUserDetails
-};
+module.exports.validateUser = validateUser;
+module.exports.validateUserLogin = validateUserLogin;
+module.exports.validateUserDetails = validateUserDetails;

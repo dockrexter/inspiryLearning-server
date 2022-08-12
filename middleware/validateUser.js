@@ -1,5 +1,5 @@
 var response = require("../utils/response");
-let {
+const {
   validateUser,
   validateUserLogin,
   validateUserDetails,
@@ -34,6 +34,8 @@ async function validateUserDetailsData(req, res, next) {
   next();
 }
 
-module.exports.validateUserData = validateUserData;
-module.exports.validateUserLoginData = validateUserLoginData;
-module.exports.validateUserDetailsData = validateUserDetailsData;
+module.exports = {
+  validateUserData,
+  validateUserLoginData,
+  validateUserDetailsData,
+};

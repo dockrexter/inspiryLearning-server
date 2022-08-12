@@ -3,6 +3,7 @@ const path = require("path");
 const cors = require("cors");
 const http = require("http");
 const express = require("express");
+const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
 const models = require("./models");
@@ -17,15 +18,14 @@ app.use(cors());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", indexRouter);
-
 app.use("/api/users", usersRouter);
 app.use("/api/assignments", assignmentsRouter);
+app.use("/public", express.static(path.join(__dirname, "/public")));
 
 /**
  * Get port from environment and store in Express.

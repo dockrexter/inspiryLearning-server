@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const Joi = require("joi");
 module.exports = (sequelize, DataTypes) => {
   class Assignment extends Model {
     /**
@@ -39,11 +40,10 @@ const validateAssignment = (data) => {
     subject: Joi.string().required(),
     summary: Joi.string().required(),
     assignee: Joi.string().min(3).max(25).empty(),
-    status: Joi.int().required(),
+    status: Joi.required(),
+    deadline: Joi.date(),
   });
   return schema.validate(data);
 };
 
-module.export = {
-  validateAssignment
-};
+module.exports.validateAssignment = validateAssignment;
