@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Attachments.belongsTo(models.Assignment, {
-        foreignKey: 'userId',
+        foreignKey: 'assignmentId',
         onDelete: 'CASCADE'
       })
     }
