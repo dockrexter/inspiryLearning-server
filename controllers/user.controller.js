@@ -1,8 +1,8 @@
-var bcrypt = require("bcryptjs");
-var jwt = require("jsonwebtoken");
-var db = require("../models");
 require("dotenv").config;
-var response = require("../utils/response");
+const db = require("../models");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const response = require("../utils/response");
 
 const register = async (req, res) => {
   var email = req.body.email;
@@ -48,6 +48,21 @@ const login = async (req, res) => {
     return res
       .status(401)
       .json(response(401, "error", "password is incorrect", {}));
+
+  if (user.role !== req.role)
+    return res
+      .status(401)
+      .json(
+        response(
+          401,
+          "error",
+          user.role === "admin"
+            ? "Admin cannot be login as User"
+            : "User cannot be login as Admin",
+          {}
+        )
+      );
+
   var token = jwt.sign(
     {
       _id: user.id,

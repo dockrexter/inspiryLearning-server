@@ -3,6 +3,7 @@ const path = require("path");
 const cors = require("cors");
 const http = require("http");
 const express = require("express");
+const utils = require("./utils/utils");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
@@ -21,6 +22,9 @@ app.set("view engine", "jade");
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+utils.mkdir("./public");
+utils.mkdir("./public/uploads");
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);

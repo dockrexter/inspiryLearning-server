@@ -40,7 +40,6 @@ const validateAssignment = (data) => {
     subject: Joi.string().required(),
     summary: Joi.string().required(),
     assignee: Joi.string().min(3).max(25).empty(),
-    status: Joi.required(),
     deadline: Joi.date(),
   });
   return schema.validate(data);

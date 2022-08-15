@@ -55,6 +55,7 @@ const validateUserLogin = (data) => {
   var schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
+    role: Joi.string().required(),
   });
   return schema.validate(data);
 }

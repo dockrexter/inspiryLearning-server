@@ -62,7 +62,7 @@ const createUserAssignment = async (req, res) => {
         assignmentId: assignment.id,
         fileName: file.originalname,
         fileSize: file.size,
-        url: file.path,
+        url: `/${file.path.replace(/\\/g, "/")}`,
       }))
     )
       return res
