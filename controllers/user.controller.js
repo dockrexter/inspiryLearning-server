@@ -49,7 +49,7 @@ const login = async (req, res) => {
       .status(401)
       .json(response(401, "error", "password is incorrect", {}));
 
-  if (user.role !== req.role)
+  if (user.role !== req.body.role)
     return res
       .status(401)
       .json(
