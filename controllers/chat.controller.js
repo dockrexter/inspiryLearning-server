@@ -1,7 +1,7 @@
 const db = require("../models");
 
 const getChat = async (assignmentId) => {
-  const chat = await db.chat.findAll({
+  const chat = await db.Chat.findAll({
     where: { assignmentId: assignmentId },
   });
   return chat;
