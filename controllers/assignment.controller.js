@@ -1,6 +1,6 @@
 require("dotenv").config;
-var db = require("../models");
-var response = require("../utils/response");
+const db = require("../models");
+const response = require("../utils/response");
 const { Op } = (Sequelize = require("sequelize"));
 
 /**
@@ -66,7 +66,7 @@ const createUserAssignment = async (req, res) => {
       }))
     )
       return res
-        .status(200)
+        .status(400)
         .json(response(400, "error", "attachments not uploded", {}));
   }
 

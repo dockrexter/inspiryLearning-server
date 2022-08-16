@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { upload } = require("../../middleware/multer");
+const { uploadMultiple } = require("../../middleware/multer");
 const {
   validateAssignmentData,
 } = require("../../middleware/validateAssingment");
@@ -22,7 +22,7 @@ router.get(
 router.post(
   "/createUserAssignment",
   auth,
-  upload,
+  uploadMultiple,
   validateAssignmentData,
   assignmentController.createUserAssignment
 );

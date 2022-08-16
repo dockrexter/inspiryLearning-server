@@ -7,27 +7,13 @@ const getChat = async (assignmentId) => {
   return chat;
 };
 
-const postChat = async ({
-  user_type,
-  assignment_id,
-  user_id,
-  admin_id,
-  message,
-  time_stamp,
-  attachment,
-  amount,
-  type,
-  status,
-  file_name,
-  file_size,
-  download_url,
-}) => {
-  return {
-    status: "Ok",
-  };
+const postChat = async (payload) => {
+  const chat = await db.Chat.create(payload);
+  if (chat) {
+    return { response: chat };
+  } else {
+    return { error: "error while saving message in db" };
+  }
 };
 
-module.exports = {
-  getChat,
-  postChat
-}
+module.exports = { getChat, postChat };

@@ -11,6 +11,7 @@ const models = require("./models");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/api/users.router");
 const paymentRouter = require("./routes/api/payment.router");
+const attachmentsRouter = require("./routes/api/attachment.router");
 const assignmentsRouter = require("./routes/api/assignments.router");
 
 const { addUser, removeUser, userCount } = require("./utils/room");
@@ -33,6 +34,7 @@ utils.mkdir("./public/uploads");
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/attachments", attachmentsRouter);
 app.use("/api/assignments", assignmentsRouter);
 app.use("/public", express.static(path.join(__dirname, "/public")));
 
@@ -69,36 +71,9 @@ io.on("connection", (socket) => {
       .emit("userJoined", { message: `${user.name} has joined!` });
 
     socket.on("sendMessage", async (data) => {
-      const {
-        message,
-        user_type,
-        time_stamp,
-        attachment,
-        amount,
-        type,
-        status,
-        file_name,
-        file_size,
-        download_url,
-      } = data;
-
-      const { response, error } = await postChat({
-        user_type: user_type,
-        assignment_id: assignment_id,
-        user_id: user_type == 0 ? user_id : null,
-        admin_id: user_type == 1 ? user_id : null,
-        message: message,
-        time_stamp: time_stamp,
-        attachment: attachment,
-        amount: amount,
-        type: type,
-        status: status,
-        file_name: file_name,
-        file_size: file_size,
-        download_url: download_url,
-      });
+      const { error } = await postChat(data);
       if (error) {
-        await socket.broadcast.to(user.room).emit("error", response);
+        await socket.broadcast.to(user.room).emit("error", error);
       } else {
         await socket.broadcast.to(user.room).emit("message", data);
       }
