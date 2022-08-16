@@ -1,3 +1,4 @@
+const path = require("path");
 const paypal = require("paypal-rest-sdk");
 const response = require("../utils/response");
 
@@ -90,10 +91,11 @@ const onSuccess = (req, res) => {
     execute_payment_json,
     function (error, payment) {
       if (error) {
-        throw error;
+        return res.status(401).json(response(401, "error", "An error has occured", { error }));
       } else {
-        console.log(JSON.stringify(payment));
-        res.sendFile("./templates/index.html");
+        return res.sendFile(
+          path.join(__dirname, "../templates/payment_successfull.html")
+        );
       }
     }
   );
