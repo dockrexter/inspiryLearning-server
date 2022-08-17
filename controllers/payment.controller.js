@@ -105,7 +105,7 @@ const onCancel = (req, res) =>
   res
     .status(200)
     .json(
-      response(200, "Payment cancelled", "Payment cancelled successfully", {})
+      response(200, "ok", "Payment cancelled successfully", {})
     );
 
 module.exports = { initiatePayment, onSuccess, onCancel };
