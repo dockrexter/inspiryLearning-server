@@ -65,7 +65,6 @@ models.sequelize.sync({ focus: true }).then(function () {
   });
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
     socket.on("join", async ({ user_id, assignment_id }) => {
       const { user, error } = addUser({
         id: socket.id,

@@ -14,10 +14,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Chat.init({
-    assignmentId: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER,
-    type: DataTypes.INTEGER,
+    url: DataTypes.STRING,
     amount: DataTypes.REAL,
+    type: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
+    message: DataTypes.STRING,
+    fileName: DataTypes.STRING,
+    fileSize: DataTypes.INTEGER,
+    assignmentId: DataTypes.INTEGER,
     paymentStatus: DataTypes.INTEGER
   }, {
     sequelize,
