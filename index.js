@@ -39,59 +39,6 @@ app.use("/api/assignments", assignmentsRouter);
 app.use("/public", express.static(path.join(__dirname, "/public")));
 
 /**
- * Socket.io configuration for the server
- */
-
-const io = require("socket.io")(http, {
-  cors: {
-    origin: "*",
-  },
-});
-
-io.on("connection", (socket) => {
-  socket.on("join", async ({ user_id, assignment_id }) => {
-    const { user, error } = addUser({ id: socket.id, name: user_id, room: assignment_id });
-
-    if (error) return error;
-
-    socket.join(user.room);
-
-    io.to(user.room).emit("online", userCount(user.room) >= 2);
-
-    socket.on("typing", (data) => {
-      socket.broadcast.to(user.room).emit("typing", data);
-    });
-
-    const chat = await getChat(assignment_id);
-
-    socket.emit("getChat", chat);
-
-    socket.broadcast
-      .to(user.room)
-      .emit("userJoined", { message: `${user.name} has joined!` });
-
-    socket.on("sendMessage", async (data) => {
-      const { error } = await postChat(data);
-      if (error) {
-        await socket.broadcast.to(user.room).emit("error", error);
-      } else {
-        await socket.broadcast.to(user.room).emit("message", data);
-      }
-    });
-  });
-
-  socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
-    if (user) {
-      io.to(user.room).emit("online", userCount(user.room) >= 2);
-      socket.to(user.room).emit("message", {
-        message: `${user.name} just left the room!`,
-      });
-    }
-  });
-});
-
-/**
  * Get port from environment and store in Express.
  */
 
@@ -106,6 +53,64 @@ models.sequelize.sync({ focus: true }).then(function () {
    * Listen on provided port, on all network interfaces.
    */
   const server = http.createServer(app);
+
+  /**
+   * Socket.io configuration for the server
+   */
+
+  const io = require("socket.io")(server, {
+    cors: {
+      origin: "*",
+    },
+  });
+
+  io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("join", async ({ user_id, assignment_id }) => {
+      const { user, error } = addUser({
+        id: socket.id,
+        name: user_id,
+        room: assignment_id,
+      });
+
+      if (error) return error;
+
+      socket.join(user.room);
+
+      io.to(user.room).emit("online", userCount(user.room) >= 2);
+
+      socket.on("typing", (data) => {
+        socket.broadcast.to(user.room).emit("typing", data);
+      });
+
+      const chat = await getChat(assignment_id);
+
+      socket.emit("getChat", chat);
+
+      socket.broadcast
+        .to(user.room)
+        .emit("userJoined", { message: `${user.name} has joined!` });
+
+      socket.on("sendMessage", async (data) => {
+        const { error } = await postChat(data);
+        if (error) {
+          await socket.broadcast.to(user.room).emit("error", error);
+        } else {
+          await socket.broadcast.to(user.room).emit("message", data);
+        }
+      });
+    });
+
+    socket.on("disconnect", () => {
+      const user = removeUser(socket.id);
+      if (user) {
+        io.to(user.room).emit("online", userCount(user.room) >= 2);
+        socket.to(user.room).emit("message", {
+          message: `${user.name} just left the room!`,
+        });
+      }
+    });
+  });
 
   /**
    * Listen on provided port, on all network interfaces.
