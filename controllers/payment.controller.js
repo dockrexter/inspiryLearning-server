@@ -74,21 +74,8 @@ const onSuccess = (req, res) => {
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
 
-  const execute_payment_json = {
-    payer_id: payerId,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-          total: "25.00",
-        },
-      },
-    ],
-  };
-
   paypal.payment.execute(
     paymentId,
-    execute_payment_json,
     function (error, payment) {
       if (error) {
         return res.status(401).json(response(401, "error", "An error has occured", { error }));
