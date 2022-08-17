@@ -96,7 +96,7 @@ const changePassword = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  await db.User.update(
+  const user = await db.User.update(
     {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -105,11 +105,7 @@ const updateUser = async (req, res) => {
     { where: { id: req.user.id } }
   );
   return res.status(200).json(
-    response(200, "ok", "user updated successfully", {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      phone: req.body.phone,
-    })
+    response(200, "ok", "user updated successfully", user)
   );
 };
 
