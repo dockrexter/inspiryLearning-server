@@ -73,7 +73,7 @@ const createUserAssignment = async (req, res) => {
 
   await sendFcmMessage(
     "New Assignment",
-    "You Have New Assignment",
+    `You Have New Assignment on ${assignment.deadline}`,
     await getAllAdminTokens()
   );
 
