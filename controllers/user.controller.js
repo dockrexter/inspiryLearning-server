@@ -104,9 +104,9 @@ const updateUser = async (req, res) => {
     },
     { where: { id: req.user.id } }
   );
-  return res.status(200).json(
-    response(200, "ok", "user updated successfully", user)
-  );
+  return res
+    .status(200)
+    .json(response(200, "ok", "user updated successfully", user));
 };
 
 module.exports = {

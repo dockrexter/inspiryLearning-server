@@ -2,6 +2,7 @@ require("dotenv").config;
 const db = require("../models");
 const response = require("../utils/response");
 const { Op } = (Sequelize = require("sequelize"));
+const { getAllAdminTokens, sendFcmMessage } = require("../utils/utils");
 
 /**
  * Buisness logic
@@ -70,6 +71,12 @@ const createUserAssignment = async (req, res) => {
         .json(response(400, "error", "attachments not uploded", {}));
   }
 
+  await sendFcmMessage(
+    "New Assignment",
+    "You Have New Assignment",
+    await getAllAdminTokens()
+  );
+
   return res
     .status(200)
     .json(response(200, "ok", "assignment uploaded successfully", {}));
@@ -92,17 +99,17 @@ const getCurrentMonthAssignments = async (req, res) => {
 
 const getAllDueAssignments = async (req, res) => {
   console.log(new Date(req.body.current_date));
-    const assignments = await db.Assignment.findAll({
-      where: {
-        deadline: {
-          [Op.notLike]: `${req.body.current_date}%`,
-        },
-        status: {
-          [Op.not]: 0,
-        },
+  const assignments = await db.Assignment.findAll({
+    where: {
+      deadline: {
+        [Op.notLike]: `${req.body.current_date}%`,
       },
-    });
-    return res.status(200).json(response(200, "ok", "", assignments));
+      status: {
+        [Op.not]: 0,
+      },
+    },
+  });
+  return res.status(200).json(response(200, "ok", "", assignments));
 };
 
 module.exports = {

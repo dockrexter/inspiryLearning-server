@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "inspiry-learning-fcm",
+  "private_key_id": "2489449f996a44da02be93617192e9bad854d130",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDFe3/DqodfB+5g\ngHgz/PbhibFrMbYkypRc5dgE2ZFVSFr+/Rnrx4KnLpGNyKXulxOLpS+yFLtLvgq8\nRumaE2afNlvma9OsN+0ZydPdzN2B4C1ZEin2Jt6g+IxHSOIck6hl8PLSoWTWe8CG\nrCYMXYoiI0DryJdAa0Lz29gHqJrT05eo0YzDCQijx0x8wV4q1qkxdgcgWXUTwkkC\naccqbww07TMMHpfGRhAI/Th2dCWcZiqpWhdDsJeAWtFagRBAGDpOuAIGCmfzp1As\nHaUC2c3w56ih7OdfA/2pno79MINkCHMaiybfsghtLb9Zif0CpRoKJodh391aRDUO\nep8j0kprAgMBAAECggEAU6aPBaJn6iyxYEY65IasSvfo48ewaGA5PSqM+Ozx/2aB\nSQ6MGtAte0SiGiVaiDiNanMjw3K9rYVIBd2h2QaLyzga8H1PMd2UvP49lO/RClEb\n1GV5yc9IMXZm8VEhmko/pELOkMMVtDbCZClqioVa3EADoXyb+QkWWLaQiRn1z3DL\nsL0SNapnI0bYjf1p4lwcW0JXFiX3sJ0IxXz+R+kWL83AyKjsfGwr73aE+9lzmiHl\nbWA5/9Gx3Hc2wjOnh6gTt7b/TPHE4IeCBKQKlpZFFj7wmXCZPLzSOQR+XL1gTU5y\n6R7fYXpma1Y4ym3TlulNOfP3WQF86Pz6pBtizJGAWQKBgQD3HOr4v2zwp9lf4Fly\nXJgry86IgBXQtJoSj8xxtUx9r4X5AGNyauhNaySvIkXIsOXyk91OnHzhS6VoyJvq\n2p4v1OSfUkjEVEwHYc6uWZ4GZlEaHxiM07ZLOa4xtWfxatb5LqJwIFV3byBsO6B1\nU6BztkYLzRbstgJ1Cd09eoy24wKBgQDMlaZ4GjKFPKlZL0DO66898+cAZPfMpZq+\nO6MDDZJOCNYp1bZ6dzlB3bdMFEsjzLpaM6xiCIIKHOzR36mtddI+TdAhUOTmbTW4\nGr6XLGVENbmPKF330CqRMvHCCh/vwbxtaDARKKXuS7T9DbjuaV87youGVFJnkxdy\n4vpt/ubs2QKBgFrrj+TAAeQ1zbwB/sceHHsYvL/qaJxmpr2nnPBFZYRk/WUVaIGj\nph8+CbxKXuSteZ2cG/QdjbETNSPtk7iAgW1V5lxcWRurbGHW8cWigYsXQEXdJRpD\nlzHsYhQ2C61+wuPh7bBVpTyRbZuFAM/KWiHY8cLLzeCAQz0uyPEi0v1DAoGAUmsP\nb18Ob0Kq7rTspO+p34l8zFngwl8M4gpgd4BmKm3A6YWhR+Dz/ib2Cv457ygxAtnC\nXpQS30Qb28kBMFJA6ryqVmGidXoVpB+SHJDUExCZuqSGhqkkHO6rGoK9rvcbk+/f\nPWpkvoVdWnzGvbVRmmLUpr8dm4BUeAIc5WdFXLECgYEA7LTBqEAlJ6BjJ5SPjE31\nFPVD0EIRfXETGzGAFSXz8EAljjB2njHfXEp8u9U2VzykQ4l+KXKVoBXbOaqEh7iX\njo0oLIob5HptFKYCESkbhQlxDKR9onOiF+4JfvaCm6SO6ehYCvvEV4COo1BynkZB\nrfnXtuxNOm7/gRYQkoZUkNE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-53ggr@inspiry-learning-fcm.iam.gserviceaccount.com",
+  "client_id": "110028610713596279958",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-53ggr%40inspiry-learning-fcm.iam.gserviceaccount.com"
+}

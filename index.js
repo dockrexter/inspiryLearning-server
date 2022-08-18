@@ -11,6 +11,7 @@ const models = require("./models");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/api/users.router");
 const paymentRouter = require("./routes/api/payment.router");
+const fcmtokenRouter = require("./routes/api/fcmtoken.router");
 const attachmentsRouter = require("./routes/api/attachment.router");
 const assignmentsRouter = require("./routes/api/assignments.router");
 
@@ -33,6 +34,7 @@ utils.mkdir("./public/uploads");
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/token", fcmtokenRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/attachments", attachmentsRouter);
 app.use("/api/assignments", assignmentsRouter);
