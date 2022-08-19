@@ -2,6 +2,7 @@ require("dotenv").config;
 const db = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const response = require("../utils/response");
 
 const register = async (req, res) => {
@@ -109,8 +110,71 @@ const updateUser = async (req, res) => {
     .json(response(200, "ok", "user updated successfully", user));
 };
 
+const sendResetPasswordPage = async (req, res) => {
+  return res.end(`<html><body><form action="/api/users/resetPassword" method="post">
+  <input type="text" name="token" style="display:none" value="${req.query.token}" />
+  <input type="password" name="password" placeholder="Enter new Password" required><br>
+  <input type="submit" value="Reset Password">
+  </form></body></html>`);
+};
+
+const resetPassword = async (req, res) => {
+  console.log(req.body);
+  const token = req.body.token;
+  const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+  if (decoded.expiry < Date.now())
+    return res.status(401).json(response(401, "error", "token expired", {}));
+  const salt = await bcrypt.genSalt(10);
+  const newPassword = await bcrypt.hash(req.body.password, salt);
+  await db.User.update(
+    { password: newPassword },
+    { where: { id: decoded._id } }
+  );
+  return res
+    .status(200)
+    .json(response(200, "ok", "password changed successfully", {}));
+};
+
+const sendPasswordResetLink = async (req, res) => {
+  const user = await db.User.findOne({ where: { email: req.body.email } });
+  if (!user)
+    return res
+      .status(401)
+      .json(response(401, "error", "no user found with this email", {}));
+  const token = jwt.sign(
+    {
+      _id: user.id,
+      email: user.email,
+      role: user.role,
+      expiry: Date.now() + 600000,
+    },
+    process.env.JWT_PRIVATE_KEY
+  );
+  const link = `${process.env.FRONTEND_URL}/api/users/resetPassword?token=${token}`;
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: user.email,
+    subject: "Password Reset Link",
+    html: `<p>Click on the link to reset your password</p><a href="${link}">${link}</a>`,
+  };
+  const transporter = await nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_FROM,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+  const info = await transporter.sendMail(mailOptions);
+  return res
+    .status(200)
+    .json(response(200, "ok", "password reset link sent successfully", {}));
+};
+
 module.exports = {
+  sendPasswordResetLink,
+  sendResetPasswordPage,
   changePassword,
+  resetPassword,
   updateUser,
   register,
   login,
