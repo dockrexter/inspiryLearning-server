@@ -2,7 +2,12 @@ require("dotenv").config;
 const db = require("../models");
 const response = require("../utils/response");
 const { Op } = (Sequelize = require("sequelize"));
-const { getAllAdminTokens, sendFcmMessage } = require("../utils/utils");
+const {
+  getAllAdminIds,
+  sendFcmMessage,
+  addNotification,
+  getAllAdminTokens,
+} = require("../utils/utils");
 
 /**
  * Buisness logic
@@ -71,9 +76,18 @@ const createUserAssignment = async (req, res) => {
         .json(response(400, "error", "attachments not uploded", {}));
   }
 
+  var adminIds = await getAllAdminIds();
+  for (const adminId of adminIds) {
+    await addNotification(
+      adminId,
+      assignment.id,
+      `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`
+    );
+  }
+
   await sendFcmMessage(
     "New Assignment",
-    `You Have New Assignment on ${assignment.deadline}`,
+    `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`,
     await getAllAdminTokens()
   );
 

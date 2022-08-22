@@ -14,6 +14,8 @@ router.post("/register", validateUserData, userController.register);
 router.post("/changePassword", auth, userController.changePassword);
 router.post("/updateUser", auth, validateUserDetailsData, userController.updateUser);
 
+router.post("/getAllNotifications", auth, userController.getAllNotifications);
+
 router.post("/resetPassword", userController.resetPassword);
 router.get("/resetPassword", userController.sendResetPasswordPage);
 router.post("/sendPasswordResetLink", userController.sendPasswordResetLink);

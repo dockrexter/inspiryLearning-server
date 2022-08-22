@@ -17,6 +17,12 @@ const assignmentsRouter = require("./routes/api/assignments.router");
 
 const { addUser, removeUser, userCount } = require("./utils/room");
 const { getChat, postChat } = require("./controllers/chat.controller");
+const {
+  getUserRole,
+  sendFcmMessage,
+  getAllAdminTokens,
+  getTokensByUserId,
+} = require("./utils/utils");
 
 const app = express();
 app.use(cors());
@@ -98,6 +104,19 @@ models.sequelize.sync({ focus: true }).then(function () {
           await socket.broadcast.to(user.room).emit("error", error);
         } else {
           await socket.broadcast.to(user.room).emit("message", data);
+          if ((await getUserRole(data.userId)) === "user") {
+            await sendFcmMessage(
+              "New Message",
+              `You Have New Message ${data.message}`,
+              await getAllAdminTokens()
+            );
+          } else {
+            await sendFcmMessage(
+              "New Message",
+              `You Have New Message ${data.message}`,
+              await getTokensByUserId(data.userId)
+            );
+          }
         }
       });
     });

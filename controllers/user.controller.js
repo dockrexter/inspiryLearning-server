@@ -169,9 +169,22 @@ const sendPasswordResetLink = async (req, res) => {
     .json(response(200, "ok", "password reset link sent successfully", {}));
 };
 
+const getAllNotifications = async (req, res) => {
+  const notifications = await db.Notification.findAll({
+    where: { userId: req.user.id },
+    order: [
+      ["createdAt", "DESC"],
+    ],
+  });
+  return res
+    .status(200)
+    .json(response(200, "ok", "notifications fetched successfully", notifications));
+}
+
 module.exports = {
   sendPasswordResetLink,
   sendResetPasswordPage,
+  getAllNotifications,
   changePassword,
   resetPassword,
   updateUser,

@@ -9,6 +9,13 @@ const mkdir = (path) => {
   }
 };
 
+const addNotification = async (userId, notification) => {
+  const dbnotification = await db.Notification.create({
+    userId: userId,
+    notification: notification,
+  });
+};
+
 const getUserRole = async (id) => {
   const user = await db.User.findOne({
     where: { id },
@@ -28,6 +35,13 @@ const getTokensByUserId = async (userId) => {
     where: { userId },
   });
   return tokens;
+};
+
+const getAllAdminIds = async () => {
+  const users = await db.User.findAll({
+    where: { role: "admin" },
+  });
+  return users.map((user) => user.id);
 };
 
 const getAllAdminTokens = async () => {
@@ -67,10 +81,12 @@ const sendFcmMessage = async (title, body, tokens) => {
 };
 
 module.exports = {
-    mkdir,
-    getUserRole,
-    sendFcmMessage,
-    getAllAdminTokens,
-    getTokensByUserId,
-    getUserIdByAssignmentId,
+  mkdir,
+  getUserRole,
+  sendFcmMessage,
+  getAllAdminIds,
+  addNotification,
+  getAllAdminTokens,
+  getTokensByUserId,
+  getUserIdByAssignmentId,
 };
