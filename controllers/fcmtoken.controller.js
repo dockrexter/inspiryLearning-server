@@ -20,7 +20,6 @@ const remove = async (req, res) => {
       userId: req.user.userId,
     },
   });
-
   if (row) {
     await row.destroy();
   }
