@@ -1,8 +1,8 @@
 const db = require("../models");
 const response = require("../utils/response");
 
-const add = (req, res) => {
-  const token = db.FCMToken.create({
+const add = async (req, res) => {
+  const token = await db.FCMToken.create({
     token: req.body.token,
     userId: req.user.userId,
   });
@@ -13,13 +13,17 @@ const add = (req, res) => {
   );
 };
 
-const remove = (req, res) => {
-  const token = db.FCMToken.destroy({
+const remove = async (req, res) => {
+  const row = await db.FCMToken.findOne({
     where: {
       token: req.body.token,
       userId: req.user.userId,
     },
   });
+
+  if (row) {
+    await row.destroy();
+  }
   return res.status(200).json(
     response(200, "ok", "Token removed successfully", {
       token: req.body.token,
