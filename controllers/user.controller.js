@@ -119,7 +119,6 @@ const sendResetPasswordPage = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-  console.log(req.body);
   const token = req.body.token;
   const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
   if (decoded.expiry < Date.now())

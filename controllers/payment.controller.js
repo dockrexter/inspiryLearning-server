@@ -1,3 +1,4 @@
+const db = require("../models");
 const paypal = require("paypal-rest-sdk");
 const response = require("../utils/response");
 
@@ -17,7 +18,10 @@ const initiatePayment = (req, res) => {
     },
     redirect_urls: {
       return_url:
-        "https://inspirylearning-server.herokuapp.com/api/payment/success",
+        "https://inspirylearning-server.herokuapp.com/api/payment/success?assignmentId=" +
+        req.body.assignmentId +
+        "&messageId=" +
+        req.body.messageId,
       cancel_url:
         "https://inspirylearning-server.herokuapp.com/api/payment/cancel",
     },
@@ -73,13 +77,32 @@ const onSuccess = (req, res) => {
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
 
-  paypal.payment.execute(paymentId, function (error, payment) {
-    if (error) {
-      return res
-        .status(401)
-        .json(response(401, "error", "An error has occured", { error }));
-    } else {
-      return res.end(`<html><head><link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet"></head><style> body {
+  const execute_payment_json = {
+    payer_id: payerId,
+  };
+
+  paypal.payment.execute(
+    paymentId,
+    execute_payment_json,
+    async (error, payment) => {
+      if (error) {
+        return res
+          .status(401)
+          .json(response(401, "error", "An error has occured", { error }));
+      } else {
+        await db.Chat.update(
+          {
+            paymentStatus: 1,
+          },
+          { where: { id: req.query.messageId } }
+        );
+        await db.Assignment.update(
+          {
+            paymentStatus: 1,
+          },
+          { where: { id: req.query.assignmentId } }
+        );
+        return res.end(`<html><head><link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet"></head><style> body {
         text-align: center;
         padding: 40px 0;
         background: #EBF0F5;
@@ -108,9 +131,10 @@ const onSuccess = (req, res) => {
         display: inline-block;
         margin: 0 auto;
       }</style><body><div class="card"><div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;"><i class="checkmark">✓</i>
-      </div><h1>Success</h1><p>We received your purchase request;<br/> we'll be in touch shortly!</p></div></body></html>`);
+      </div><h1>Success</h1><p>Your payment received successfully</p></div></body></html>`);
+      }
     }
-  });
+  );
 };
 
 const onCancel = (req, res) =>
@@ -118,4 +142,16 @@ const onCancel = (req, res) =>
     .status(200)
     .json(response(200, "ok", "Payment cancelled successfully", {}));
 
-module.exports = { initiatePayment, onSuccess, onCancel };
+const rejectPayment = async (req, res) => {
+  const chat = await db.Chat.update(
+    {
+      paymentStatus: 2,
+    },
+    { where: { id: req.body.messageId } }
+  );
+  return res
+    .status(200)
+    .json(response(200, "ok", "payment rejected successfully", {}));
+};
+
+module.exports = { initiatePayment, rejectPayment, onSuccess, onCancel };
