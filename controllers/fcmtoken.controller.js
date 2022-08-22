@@ -8,7 +8,7 @@ const add = (req, res) => {
   });
   return res.status(200).json(
     response(200, "ok", "Token register successfully", {
-      token,
+      token: req.body.token,
     })
   );
 };
@@ -22,7 +22,7 @@ const remove = (req, res) => {
   });
   return res.status(200).json(
     response(200, "ok", "Token removed successfully", {
-      token,
+      token: req.body.token,
     })
   );
 };
