@@ -4,7 +4,7 @@ const response = require("../utils/response");
 const add = async (req, res) => {
   const token = await db.FCMToken.create({
     token: req.body.token,
-    userId: req.user.userId,
+    userId: req.user.id,
   });
   return res.status(200).json(
     response(200, "ok", "Token register successfully", {
@@ -17,7 +17,7 @@ const remove = async (req, res) => {
   const row = await db.FCMToken.findOne({
     where: {
       token: req.body.token,
-      userId: req.user.userId,
+      userId: req.user.id,
     },
   });
   if (row) {
