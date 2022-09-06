@@ -15,6 +15,9 @@ const fcmtokenRouter = require("./routes/api/fcmtoken.router");
 const attachmentsRouter = require("./routes/api/attachment.router");
 const assignmentsRouter = require("./routes/api/assignments.router");
 
+const admin = require("firebase-admin");
+const serviceAccount = require("./utils/inspiry-learning-fcm.json");
+
 const { addUser, removeUser, userCount } = require("./utils/room");
 const { getChat, postChat } = require("./controllers/chat.controller");
 const {
@@ -45,6 +48,10 @@ app.use("/api/payment", paymentRouter);
 app.use("/api/attachments", attachmentsRouter);
 app.use("/api/assignments", assignmentsRouter);
 app.use("/public", express.static(path.join(__dirname, "/public")));
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 /**
  * Get port from environment and store in Express.
@@ -99,22 +106,43 @@ models.sequelize.sync({ focus: true }).then(function () {
         .emit("userJoined", { message: `${user.name} has joined!` });
 
       socket.on("sendMessage", async (data) => {
-        const { error } = await postChat(data);
+        const { error, response } = await postChat(data);
         if (error) {
           await socket.broadcast.to(user.room).emit("error", error);
         } else {
+          data.id = response.id;
           await socket.broadcast.to(user.room).emit("message", data);
+          await socket.emit('messageID', { id: response.id });
+          console.log(data);
           if ((await getUserRole(data.userId)) === "user") {
             await sendFcmMessage(
               "New Message",
               `You Have New Message ${data.message}`,
-              await getAllAdminTokens()
+              await getAllAdminTokens(),
+              user.room
             );
+            var adminIds = await getAllAdminIds();
+            for (const adminId of adminIds) {
+              await addNotification(
+                adminId,
+                `You Have New Message ${data.message}`,
+                "New Message",
+                user.room,
+              );
+            }
           } else {
             await sendFcmMessage(
               "New Message",
               `You Have New Message ${data.message}`,
-              await getTokensByUserId(data.userId)
+              await getTokensByUserId(user.room),
+              user.room
+            );
+            const userID = await getUserIdByAssignmentId(user.room);
+            await addNotification(
+              userID,
+              `You Have New Message ${data.message}`,
+              "New Message",
+              user.room,
             );
           }
         }

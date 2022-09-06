@@ -1,18 +1,18 @@
 const fs = require("fs");
 const db = require("../models");
 const admin = require("firebase-admin");
-const serviceAccount = require("./inspiry-learning-fcm.json");
-
 const mkdir = (path) => {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
   }
 };
 
-const addNotification = async (userId, notification) => {
+const addNotification = async (userId, message, title, assignmentId) => {
   const dbnotification = await db.Notification.create({
     userId: userId,
-    notification: notification,
+    message: message,
+    title: title,
+    assignmentID: assignmentId
   });
 };
 
@@ -30,10 +30,21 @@ const getUserIdByAssignmentId = async (assignmentId) => {
   return assignment.userId;
 };
 
-const getTokensByUserId = async (userId) => {
-  const tokens = await db.FCMToken.findAll({
+const getTokensByUserId = async (assignmentId) => {
+  const userId = await getUserIdByAssignmentId(assignmentId);
+  var tokens = []
+  const token = await db.FCMToken.findAll({
     where: { userId },
   });
+  if (token.length > 0) {
+    for (t of token) {
+      tokens.push(t.token);
+    }
+  }
+  else {
+    console.log("I am in else");
+  }
+  console.log(tokens);
   return tokens;
 };
 
@@ -48,22 +59,34 @@ const getAllAdminTokens = async () => {
   const admins = await db.User.findAll({
     where: { role: "admin" },
   });
-  const tokens = [];
+
+  var tokens = [];
   for (let i = 0; i < admins.length; i++) {
     const token = await db.FCMToken.findAll({
       where: { userId: admins[i].id },
     });
-    if (token) tokens.push(token);
+    console.log(tokens);
+    if (token.length > 0) {
+      for (t of token) {
+        tokens.push(t.token);
+      }
+    }
+    else {
+      console.log("I am in else");
+    }
   }
   return tokens;
 };
 
 const sendFcmMessage = async (title, body, tokens) => {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+
   const message = {
-    data: { title: title, body: body },
+
+    data: {
+      title: title,
+      body: body,
+    },
+
     tokens: tokens,
   };
   admin
@@ -75,9 +98,7 @@ const sendFcmMessage = async (title, body, tokens) => {
     .catch((error) => {
       console.log("Error sending message:", error);
     })
-    .finally(() => {
-      admin.app().delete();
-    });
+
 };
 
 module.exports = {

@@ -1,5 +1,6 @@
 require("dotenv").config;
 const db = require("../models");
+const moment = require("moment");
 const response = require("../utils/response");
 const { Op } = (Sequelize = require("sequelize"));
 const {
@@ -7,11 +8,19 @@ const {
   sendFcmMessage,
   addNotification,
   getAllAdminTokens,
+  getTokensByUserId
 } = require("../utils/utils");
 
 /**
  * Buisness logic
  */
+
+const status = {
+  3: "Under Review",
+  4: "Pending Payment",
+  1: "Work in Progress",
+  0: "Work Completed",
+}
 
 const getUserAssignments = async (req, res) => {
   const assignments = await db.Assignment.findAll({
@@ -46,6 +55,12 @@ const updateStatus = async (req, res) => {
     },
     { where: { id: req.body.assignment_id } }
   );
+  await sendFcmMessage(
+    "Assignment Status",
+    `Assignment status has been changed to ${status[req.body.status]}`,
+    await getTokensByUserId(req.body.assignment_id),
+    req.body.assignment_id,
+  );
   return res
     .status(200)
     .json(response(200, "ok", "status updated successfully", {}));
@@ -59,7 +74,7 @@ const createUserAssignment = async (req, res) => {
     userId: req.user.id,
     subject: req.body.subject,
     summary: req.body.summary,
-    deadline: req.body.deadline,
+    deadline: moment.utc(req.body.deadline).toDate().toISOString(),
   });
 
   for (const file of req.files) {
@@ -80,15 +95,17 @@ const createUserAssignment = async (req, res) => {
   for (const adminId of adminIds) {
     await addNotification(
       adminId,
+      `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`,
+      "New Assignment",
       assignment.id,
-      `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`
     );
   }
 
   await sendFcmMessage(
     "New Assignment",
     `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`,
-    await getAllAdminTokens()
+    await getAllAdminTokens(),
+    assignment.id,
   );
 
   return res
@@ -98,12 +115,13 @@ const createUserAssignment = async (req, res) => {
 
 const getCurrentMonthAssignments = async (req, res) => {
   const { current_month, current_year } = req.body;
+  console.log(`${current_year}-${current_month + 1}-01`)
 
   const assignments = await db.Assignment.findAll({
     where: {
       deadline: {
         [Op.gte]: new Date(`${current_year}-${current_month}-01`),
-        [Op.lt]: new Date(`${current_year}-${current_month + 1}-01`),
+        [Op.lt]: new Date(`${current_year}-${parseInt(current_month) + 1}-01`),
       },
     },
   });

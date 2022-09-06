@@ -1,6 +1,12 @@
 const db = require("../models");
 const paypal = require("paypal-rest-sdk");
 const response = require("../utils/response");
+const {
+  getUserRole,
+  sendFcmMessage,
+  getAllAdminTokens,
+  getTokensByUserId,
+} = require("../utils/utils");
 
 paypal.configure({
   mode: "sandbox", //sandbox or live
@@ -18,12 +24,12 @@ const initiatePayment = (req, res) => {
     },
     redirect_urls: {
       return_url:
-        "https://inspirylearning-server.herokuapp.com/api/payment/success?assignmentId=" +
+        "http://192.168.100.125:8000/api/payment/success?assignmentId=" +
         req.body.assignmentId +
         "&messageId=" +
         req.body.messageId,
       cancel_url:
-        "https://inspirylearning-server.herokuapp.com/api/payment/cancel",
+        "http://192.168.100.125:8000/api/payment/cancel",
     },
     transactions: [
       {
@@ -102,6 +108,20 @@ const onSuccess = (req, res) => {
           },
           { where: { id: req.query.assignmentId } }
         );
+        await addNotification(
+          req.user.id,
+          `Payment has been successfully made for ${req.query.assignmentId}`,
+          "Payment status change",
+
+          req.query.assignmentId
+        );
+        await sendFcmMessage(
+          "Payment status change",
+          `Payment has been successfully made for ${req.query.assignmentId}`,
+          await getAllAdminTokens(),
+          req.query.assignmentId
+        );
+
         return res.end(`<html><head><link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet"></head><style> body {
         text-align: center;
         padding: 40px 0;
@@ -143,15 +163,55 @@ const onCancel = (req, res) =>
     .json(response(200, "ok", "Payment cancelled successfully", {}));
 
 const rejectPayment = async (req, res) => {
-  const chat = await db.Chat.update(
-    {
-      paymentStatus: 2,
-    },
-    { where: { id: req.body.messageId } }
-  );
-  return res
-    .status(200)
-    .json(response(200, "ok", "payment rejected successfully", {}));
+  try {
+    console.log("messageID=>", req.body.messageId);
+    await db.Chat.update(
+      {
+        paymentStatus: 2,
+      },
+      { where: { id: req.body.messageId } }
+    );
+    const chat = await db.Chat.findByPk(req.body.messageId);
+
+    console.log("chat object =>", chat);
+    if (req.user.role == "user") {
+      await addNotification(
+        req.user.id,
+        `Payment has been rejected for assignment ID: ${chat.assignmentId}`,
+        "Payment status change",
+        chat.assignmentId,
+      );
+    }
+    else {
+      var adminIds = await getAllAdminIds();
+      for (const adminId of adminIds) {
+        await addNotification(
+          adminId,
+          `Payment has been rejected for assignment ID: ${chat.assignmentId}`,
+          "Payment status change",
+          chat.assignmentId,
+        );
+      }
+    }
+
+    await sendFcmMessage(
+      "Payment status change",
+      `Payment has been rejected for assignment ID: ${chat.assignmentId}`,
+      req.user.role == "user" ? await getAllAdminTokens() : await getTokensByUserId(chat.assignmentId),
+      chat.assignmentId
+    );
+    return res
+      .status(200)
+      .json(response(200, "ok", "payment rejected successfully", {}));
+
+  }
+  catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "ok", "something went wrong", {}));
+
+  }
+
 };
 
 module.exports = { initiatePayment, rejectPayment, onSuccess, onCancel };
