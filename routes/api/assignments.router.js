@@ -18,6 +18,7 @@ router.get(
   auth,
   assignmentController.getUserAssignments
 );
+router.post("/getAssignmentById",auth, assignmentController.getAssignmentById);
 
 router.post(
   "/createUserAssignment",

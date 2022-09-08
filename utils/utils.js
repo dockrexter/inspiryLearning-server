@@ -9,10 +9,11 @@ const mkdir = (path) => {
 
 const addNotification = async (userId, message, title, assignmentId) => {
   const dbnotification = await db.Notification.create({
-    userId: userId,
+    userID: userId,
     message: message,
     title: title,
-    assignmentID: assignmentId
+    assignmentID: assignmentId,
+    isRead: false
   });
 };
 
@@ -27,15 +28,18 @@ const getUserIdByAssignmentId = async (assignmentId) => {
   const assignment = await db.Assignment.findOne({
     where: { id: assignmentId },
   });
+  console.log("USER ID IN ASSIGN=>",assignment.userId)
   return assignment.userId;
 };
 
 const getTokensByUserId = async (assignmentId) => {
+  console.log("Checking ID=>",assignmentId)
   const userId = await getUserIdByAssignmentId(assignmentId);
   var tokens = []
   const token = await db.FCMToken.findAll({
     where: { userId },
   });
+  console.log("TOKEN OF USER: ",token)
   if (token.length > 0) {
     for (t of token) {
       tokens.push(t.token);
@@ -56,6 +60,7 @@ const getAllAdminIds = async () => {
 };
 
 const getAllAdminTokens = async () => {
+  try {
   const admins = await db.User.findAll({
     where: { role: "admin" },
   });
@@ -74,8 +79,11 @@ const getAllAdminTokens = async () => {
     else {
       console.log("I am in else");
     }
+    return tokens;
   }
-  return tokens;
+} catch (error) {
+ console.error("Token: ", error)   
+}
 };
 
 const sendFcmMessage = async (title, body, tokens) => {
@@ -89,6 +97,7 @@ const sendFcmMessage = async (title, body, tokens) => {
 
     tokens: tokens,
   };
+  try {
   admin
     .messaging()
     .sendMulticast(message)
@@ -98,7 +107,10 @@ const sendFcmMessage = async (title, body, tokens) => {
     .catch((error) => {
       console.log("Error sending message:", error);
     })
-
+  } catch (error) {
+    console.error("FCM: ",error)
+    
+  }
 };
 
 module.exports = {

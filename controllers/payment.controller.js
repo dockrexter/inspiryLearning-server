@@ -3,6 +3,7 @@ const paypal = require("paypal-rest-sdk");
 const response = require("../utils/response");
 const {
   getUserRole,
+  addNotification,
   sendFcmMessage,
   getAllAdminTokens,
   getTokensByUserId,
@@ -110,17 +111,18 @@ const onSuccess = (req, res) => {
         );
         await addNotification(
           req.user.id,
-          `Payment has been successfully made for ${req.query.assignmentId}`,
-          "Payment status change",
-
+          `Payment successfully received for Assignment`,
+          "Payment Update",
           req.query.assignmentId
         );
+        const fbtoken = await getAllAdminTokens()
+        if(fbtoken?.length){
         await sendFcmMessage(
-          "Payment status change",
-          `Payment has been successfully made for ${req.query.assignmentId}`,
-          await getAllAdminTokens(),
+          "Payment Update",
+          `Payment successfully received for Assignment`,
+          fbtoken,
           req.query.assignmentId
-        );
+        );}
 
         return res.end(`<html><head><link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet"></head><style> body {
         text-align: center;
@@ -172,34 +174,42 @@ const rejectPayment = async (req, res) => {
       { where: { id: req.body.messageId } }
     );
     const chat = await db.Chat.findByPk(req.body.messageId);
-
-    console.log("chat object =>", chat);
-    if (req.user.role == "user") {
+    console.log("chat object =>", chat, "User Object",req.user.role);
+    if (req.user.role === "user") {
       await addNotification(
         req.user.id,
-        `Payment has been rejected for assignment ID: ${chat.assignmentId}`,
-        "Payment status change",
+        `Payment has been Rejected/Withdrawed `,
+        "Payment Update",
         chat.assignmentId,
       );
+      const fbtokenClient = await getTokensByUserId(chat.assignmentId);
+      console.log("Checking: ",fbtokenClient)
+      if(fbtokenClient?.length){
+        await sendFcmMessage(
+          "Payment Update",
+          `Payment has been Rejected/Withdrawed`,
+          fbtokenClient,
+          chat.assignmentId,
+        );}
     }
     else {
       var adminIds = await getAllAdminIds();
       for (const adminId of adminIds) {
         await addNotification(
           adminId,
-          `Payment has been rejected for assignment ID: ${chat.assignmentId}`,
+          `Payment has been Rejected/Withdrawed`,
           "Payment status change",
           chat.assignmentId,
-        );
-      }
+        );}
+        const fbtoken = getAllAdminTokens();
+        if(fbtoken?.length){
+          await sendFcmMessage(
+            "Payment Update",
+            `Payment has been Rejected/Withdrawed`,
+             fbtoken,
+             chat.assignmentId,
+        );}
     }
-
-    await sendFcmMessage(
-      "Payment status change",
-      `Payment has been rejected for assignment ID: ${chat.assignmentId}`,
-      req.user.role == "user" ? await getAllAdminTokens() : await getTokensByUserId(chat.assignmentId),
-      chat.assignmentId
-    );
     return res
       .status(200)
       .json(response(200, "ok", "payment rejected successfully", {}));

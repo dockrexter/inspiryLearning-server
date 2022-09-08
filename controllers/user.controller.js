@@ -6,6 +6,7 @@ const nodemailer = require("nodemailer");
 const response = require("../utils/response");
 
 const register = async (req, res) => {
+  try {
   var email = req.body.email;
   let user_email = await db.User.findOne({
     where: { email: email },
@@ -35,9 +36,14 @@ const register = async (req, res) => {
   res
     .status(200)
     .json(response(200, "ok", "user registerd successfully", userObj));
+  } catch (error) {
+    return res.status(500)
+    .json(response(500, "error", "Something Went Wrong"));
+  }
 };
 
 const login = async (req, res) => {
+  try {
   let user = await db.User.findOne({ where: { email: req.body.email } });
   if (!user)
     return res
@@ -77,9 +83,16 @@ const login = async (req, res) => {
   res
     .status(200)
     .json(response(200, "ok", "user logged in successfully", user));
+
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "Somrthing went wrong")); 
+  }
 };
 
 const changePassword = async (req, res) => {
+  try {
   const isValid = await bcrypt.compare(req.body.oldPassword, req.user.password);
   if (!isValid)
     return res
@@ -94,9 +107,15 @@ const changePassword = async (req, res) => {
   return res
     .status(200)
     .json(response(200, "ok", "password changed successfully", {}));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "Something Went Wrong"));
+  }
 };
 
 const updateUser = async (req, res) => {
+  try {
   const user = await db.User.update(
     {
       firstName: req.body.firstName,
@@ -108,6 +127,10 @@ const updateUser = async (req, res) => {
   return res
     .status(200)
     .json(response(200, "ok", "user updated successfully", user));
+  } catch (error) {
+    return res.status(500)
+    .json(response(500, "error", "Something Went Wrong"));
+  }
 };
 
 const sendResetPasswordPage = async (req, res) => {
@@ -119,6 +142,7 @@ const sendResetPasswordPage = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
+  try {
   const token = req.body.token;
   const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
   if (decoded.expiry < Date.now())
@@ -132,9 +156,15 @@ const resetPassword = async (req, res) => {
   return res
     .status(200)
     .json(response(200, "ok", "password changed successfully", {}));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "SomeThing Went Wrong")); 
+  }
 };
 
 const sendPasswordResetLink = async (req, res) => {
+  try {
   const user = await db.User.findOne({ where: { email: req.body.email } });
   if (!user)
     return res
@@ -168,24 +198,71 @@ const sendPasswordResetLink = async (req, res) => {
   return res
     .status(200)
     .json(response(200, "ok", "password reset link sent successfully", {}));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "Error", "SomeThing Went Wrong"));
+  }
 };
 
 const getAllNotifications = async (req, res) => {
+  try {
   const notifications = await db.Notification.findAll({
-    where: { userId: req.user.id },
+    where: { userID: req.user.id },
     order: [
       ["createdAt", "DESC"],
     ],
   });
+  console.log("Notifications=>: ", notifications)
   return res
     .status(200)
     .json(response(200, "ok", "notifications fetched successfully", notifications));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "Something Went Wrong"));
+    
+  }
+}
+
+const updateReadNotifications = async (req, res) => {
+  try {console.log("Notifation Read: ",req.body.userId)
+  await db.Notification.update(
+    {
+      isRead: 1,
+    },
+    { where: { userID: req.body.userId } }
+  );
+  return res.status(200)
+    .json(response(200, "ok", "Readed"));
+} catch (error) {
+  console.log("Error in Read Notifications=>",error)
+  return res.status(500)
+    .json(response(500, "error", "Something Went Wrong",error));
+}
+}
+const updateSingleReadNotifications = async (req, res) => {
+  try {console.log("Notifation Read: ",req.body.id)
+  await db.Notification.update(
+    {
+      isRead: 1,
+    },
+    { where: { id: req.body.id } }
+  );
+  return res.status(200)
+    .json(response(200, "ok", "Readed"));
+} catch (error) {
+  return res.status(500)
+    .json(response(500, "error", "Something Went Wrong",error));
+}
 }
 
 module.exports = {
   sendPasswordResetLink,
   sendResetPasswordPage,
   getAllNotifications,
+  updateReadNotifications,
+  updateSingleReadNotifications,
   changePassword,
   resetPassword,
   updateUser,

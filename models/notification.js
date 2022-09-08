@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Notification.belongsTo(models.User, {
-        foreignKey: "userId",
+        foreignKey: "userID",
         onDelete: "CASCADE",
       });
     }
@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     userID: DataTypes.INTEGER,
     message: DataTypes.STRING,
     title: DataTypes.STRING,
-    assignmentID: DataTypes.STRING
+    assignmentID: DataTypes.STRING,
+    isRead:DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Notification',

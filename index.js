@@ -113,37 +113,62 @@ models.sequelize.sync({ focus: true }).then(function () {
           data.id = response.id;
           await socket.broadcast.to(user.room).emit("message", data);
           await socket.emit('messageID', { id: response.id });
-          console.log(data);
+          console.log("Data in socket: ",data);
+          console.log("USER ROOMCHECK=>" ,user.room)
           if ((await getUserRole(data.userId)) === "user") {
+            console.log(" I AM IN USER");
+            const fbtoken = await getAllAdminTokens()
+            if(fbtoken?.length){
             await sendFcmMessage(
               "New Message",
               `You Have New Message ${data.message}`,
-              await getAllAdminTokens(),
-              user.room
+              fbtoken,
+              data.assignmentId
             );
-            var adminIds = await getAllAdminIds();
+          }
+            var adminIds = await utils.getAllAdminIds();
             for (const adminId of adminIds) {
-              await addNotification(
+             const add =  await utils.addNotification(
                 adminId,
                 `You Have New Message ${data.message}`,
                 "New Message",
-                user.room,
+                data.assignmentId,
               );
+              console.log("ADDED NOTIFICATION SOCKET: ", add)
             }
           } else {
+            if(data?.type === 1){
+              const fbtokenClient = await getTokensByUserId(user.room)
+            if(fbtokenClient?.length){
+            await sendFcmMessage(
+              "Payment Update",
+              `You Have New Qoutation of ammount $${data?.amount}`,
+              fbtokenClient,
+              data.assignmentId
+            );}
+            const userID = await utils.getUserIdByAssignmentId(user.room);
+            await utils.addNotification(
+              userID,
+              `You Have New Qoutation of ammount $${data?.amount}`,
+              "Payment Update",
+              user.room,
+            );
+          }else{
+            const fbtokenClient = await getTokensByUserId(user.room)
+            if(fbtokenClient?.length){
             await sendFcmMessage(
               "New Message",
               `You Have New Message ${data.message}`,
-              await getTokensByUserId(user.room),
-              user.room
-            );
-            const userID = await getUserIdByAssignmentId(user.room);
-            await addNotification(
+              fbtokenClient,
+              data.assignmentId
+            );}
+            const userID = await utils.getUserIdByAssignmentId(user.room);
+            await utils.addNotification(
               userID,
               `You Have New Message ${data.message}`,
               "New Message",
               user.room,
-            );
+            );}
           }
         }
       });

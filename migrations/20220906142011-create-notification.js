@@ -20,6 +20,9 @@ module.exports = {
       assignmentID: {
         type: Sequelize.STRING
       },
+      isRead: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

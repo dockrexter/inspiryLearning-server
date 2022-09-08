@@ -8,7 +8,8 @@ const {
   sendFcmMessage,
   addNotification,
   getAllAdminTokens,
-  getTokensByUserId
+  getTokensByUserId,
+  getUserIdByAssignmentId
 } = require("../utils/utils");
 
 /**
@@ -23,20 +24,48 @@ const status = {
 }
 
 const getUserAssignments = async (req, res) => {
+  try{
   const assignments = await db.Assignment.findAll({
     where: { userId: req.user.id },
   });
-  return res.status(200).json(response(200, "ok", "", assignments));
+  return res.status(200).json(response(200, "ok", "Successfull", assignments));
+} catch (error) {
+  return res
+  .status(500)
+  .json(response(500, "error", "Something went wrong"));
+}
+};
+
+const getAssignmentById = async (req, res) => {
+  console.log("MSI APPLE: ",req.body.assignment_id)
+  try {
+  const assignments = await db.Assignment.findOne({
+    where: { id: req.body.assignment_id },
+  });
+  return res.status(200).json(response(200, "ok", "Successfull by ID", assignments));
+}
+catch (error) {
+  return res
+  .status(500)
+  .json(response(500, "BAD REQUEST", "Something Went Wrong", {}));
+  }
 };
 
 const getAttachments = async (req, res) => {
+  try{
   const attachments = await db.Attachments.findAll({
     where: { assignmentId: req.body.assignment_id },
   });
   return res.status(200).json(response(200, "ok", "", attachments));
+} catch (error) {
+  return res
+  .status(500)
+  .json(response(500, "error", "Something went wrong"));
+}
 };
 
 const updateAssignee = async (req, res) => {
+  try {
   await db.Assignment.update(
     {
       assignee: req.body.assignee,
@@ -46,27 +75,48 @@ const updateAssignee = async (req, res) => {
   return res
     .status(200)
     .json(response(200, "ok", "assignee updated successfully", {}));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "Something went wrong"));
+  }
 };
 
 const updateStatus = async (req, res) => {
+  try {
   await db.Assignment.update(
     {
       status: req.body.status,
     },
     { where: { id: req.body.assignment_id } }
   );
+  const userId = await getUserIdByAssignmentId(req.body.assignment_id);
+  await addNotification(
+    userId,
+    `Assignment status has been changed to ${status[req.body.status]}`,
+    "Assignment Status",
+    req.body.assignment_id,
+  );
+  const fbtokenClient = await getTokensByUserId(req.body.assignment_id);
+  if(fbtokenClient?.length){
   await sendFcmMessage(
     "Assignment Status",
     `Assignment status has been changed to ${status[req.body.status]}`,
-    await getTokensByUserId(req.body.assignment_id),
+    fbtokenClient,
     req.body.assignment_id,
-  );
+  );}
   return res
     .status(200)
     .json(response(200, "ok", "status updated successfully", {}));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "Somthing Went Wrong"));
+  }
 };
 
 const createUserAssignment = async (req, res) => {
+  try {
   const assignment = await db.Assignment.create({
     status: 2,
     assignee: null,
@@ -95,25 +145,36 @@ const createUserAssignment = async (req, res) => {
   for (const adminId of adminIds) {
     await addNotification(
       adminId,
-      `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`,
+      `You Have New Assignment ${assignment.subject}`,
       "New Assignment",
       assignment.id,
     );
   }
-
+  const fbtoken = await getAllAdminTokens()
+  console.log("FBTOKEN CHECK=>", fbtoken)
+  if(fbtoken?.length){
+    console.log("FBTOKEN CHECK=> in if", fbtoken)
   await sendFcmMessage(
     "New Assignment",
-    `You Have New Assignment ${assignment.subject} on ${assignment.deadline}`,
-    await getAllAdminTokens(),
+    `You Have New Assignment ${assignment.subject}`,
+    fbtoken,
     assignment.id,
-  );
+  ).catch((error) => {
+    console.error(error);
+  });}
 
   return res
     .status(200)
     .json(response(200, "ok", "assignment uploaded successfully", {}));
+  } catch (error) {
+    return res
+    .status(500)
+    .json(response(500, "error", "Something Went Wrong"));
+  }
 };
 
 const getCurrentMonthAssignments = async (req, res) => {
+  try {
   const { current_month, current_year } = req.body;
   console.log(`${current_year}-${current_month + 1}-01`)
 
@@ -127,10 +188,14 @@ const getCurrentMonthAssignments = async (req, res) => {
   });
 
   return res.status(200).json(response(200, "ok", "", assignments));
+} catch (error) {
+  return res.status(500).json(response(500, "error", "Something Went Wrong"))
+    
+}
 };
 
 const getAllDueAssignments = async (req, res) => {
-  console.log(new Date(req.body.current_date));
+  try {
   const assignments = await db.Assignment.findAll({
     where: {
       deadline: {
@@ -142,6 +207,9 @@ const getAllDueAssignments = async (req, res) => {
     },
   });
   return res.status(200).json(response(200, "ok", "", assignments));
+} catch (error) {
+  return res.status(500).json(response(500, "error", "Something Went Wrong"));
+}
 };
 
 module.exports = {
@@ -152,4 +220,5 @@ module.exports = {
   getAllDueAssignments,
   createUserAssignment,
   getCurrentMonthAssignments,
+  getAssignmentById, 
 };

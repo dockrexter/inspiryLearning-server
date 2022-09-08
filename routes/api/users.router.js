@@ -15,6 +15,9 @@ router.post("/changePassword", auth, userController.changePassword);
 router.post("/updateUser", auth, validateUserDetailsData, userController.updateUser);
 
 router.get("/getAllNotifications", auth, userController.getAllNotifications);
+router.post("/notificationReaded", auth, userController.updateReadNotifications);
+router.post("/singleNotificationReaded", auth, userController.updateSingleReadNotifications);
+
 
 router.post("/resetPassword", userController.resetPassword);
 router.get("/resetPassword", userController.sendResetPasswordPage);
