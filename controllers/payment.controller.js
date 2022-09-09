@@ -116,13 +116,14 @@ const onSuccess = (req, res) => {
           req.query.assignmentId
         );
         const fbtoken = await getAllAdminTokens()
-        if(fbtoken?.length){
-        await sendFcmMessage(
-          "Payment Update",
-          `Payment successfully received for Assignment`,
-          fbtoken,
-          req.query.assignmentId
-        );}
+        if (fbtoken?.length) {
+          await sendFcmMessage(
+            "Payment Update",
+            `Payment successfully received for Assignment`,
+            fbtoken,
+            req.query.assignmentId
+          );
+        }
 
         return res.end(`<html><head><link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet"></head><style> body {
         text-align: center;
@@ -174,7 +175,7 @@ const rejectPayment = async (req, res) => {
       { where: { id: req.body.messageId } }
     );
     const chat = await db.Chat.findByPk(req.body.messageId);
-    console.log("chat object =>", chat, "User Object",req.user.role);
+    console.log("chat object =>", chat, "User Object", req.user.role);
     if (req.user.role === "user") {
       await addNotification(
         req.user.id,
@@ -183,14 +184,15 @@ const rejectPayment = async (req, res) => {
         chat.assignmentId,
       );
       const fbtokenClient = await getTokensByUserId(chat.assignmentId);
-      console.log("Checking: ",fbtokenClient)
-      if(fbtokenClient?.length){
+      console.log("Checking: ", fbtokenClient)
+      if (fbtokenClient?.length) {
         await sendFcmMessage(
           "Payment Update",
           `Payment has been Rejected/Withdrawed`,
           fbtokenClient,
           chat.assignmentId,
-        );}
+        );
+      }
     }
     else {
       var adminIds = await getAllAdminIds();
@@ -200,15 +202,17 @@ const rejectPayment = async (req, res) => {
           `Payment has been Rejected/Withdrawed`,
           "Payment status change",
           chat.assignmentId,
-        );}
-        const fbtoken = getAllAdminTokens();
-        if(fbtoken?.length){
-          await sendFcmMessage(
-            "Payment Update",
-            `Payment has been Rejected/Withdrawed`,
-             fbtoken,
-             chat.assignmentId,
-        );}
+        );
+      }
+      const fbtoken = getAllAdminTokens();
+      if (fbtoken?.length) {
+        await sendFcmMessage(
+          "Payment Update",
+          `Payment has been Rejected/Withdrawed`,
+          fbtoken,
+          chat.assignmentId,
+        );
+      }
     }
     return res
       .status(200)
