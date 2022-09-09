@@ -25,12 +25,12 @@ const initiatePayment = (req, res) => {
     },
     redirect_urls: {
       return_url:
-        "http://192.168.100.125:8000/api/payment/success?assignmentId=" +
+        "http://server.inspirylearning.com/api/payment/success?assignmentId=" +
         req.body.assignmentId +
         "&messageId=" +
         req.body.messageId,
       cancel_url:
-        "http://192.168.100.125:8000/api/payment/cancel",
+        "http://server.inspirylearning.com/api/payment/cancel",
     },
     transactions: [
       {
