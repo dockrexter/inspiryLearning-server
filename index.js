@@ -80,7 +80,7 @@ models.sequelize.sync({ focus: true }).then(function () {
       target: "http://localhost:8000",
       ws: true,
     })
-    .listen(4000);
+    .listen(4000, "127.0.0.1");
 
   const io = require("socket.io")(server, {
     cors: {
