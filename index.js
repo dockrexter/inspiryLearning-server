@@ -76,7 +76,7 @@ models.sequelize.sync({ focus: true }).then(function () {
 
   httpProxy
     .createProxyServer({
-      target: "http://localhost:8000",
+      target: "http://localhost:8000/socket.io",
       ws: true,
     })
     .listen(4000);
