@@ -77,8 +77,6 @@ models.sequelize.sync({ focus: true }).then(function () {
 
 
   const io = require("socket.io")(server, {
-    path: '/seacher',
-    transports: ['websocket'],
     cors: {
       origin: "*",
     },
