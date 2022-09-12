@@ -1,7 +1,7 @@
 require("dotenv").config();
 const path = require("path");
 const cors = require("cors");
-const http = require("http");
+const http = require("https");
 const express = require("express");
 const utils = require("./utils/utils");
 const bodyParser = require("body-parser");
