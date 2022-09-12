@@ -74,7 +74,12 @@ models.sequelize.sync({ focus: true }).then(function () {
   //  */
 
 
-
+  httpProxy
+    .createProxyServer({
+      target: "http://localhost:3000",
+      ws: true,
+    })
+    .listen(4000);
 
   const io = require("socket.io")(server, {
     cors: {
