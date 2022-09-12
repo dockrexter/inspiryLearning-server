@@ -74,12 +74,12 @@ models.sequelize.sync({ focus: true }).then(function () {
    * Socket.io configuration for the server
   //  */
 
-  // httpProxy
-  //   .createProxyServer({
-  //     target: "http://localhost:8000/socket.io",
-  //     ws: true,
-  //   })
-  //   .listen(4000);
+  httpProxy
+    .createProxyServer({
+      target: "http://localhost:8000",
+      ws: true,
+    })
+    .listen(4000);
 
 
   const io = require("socket.io")(server, {
