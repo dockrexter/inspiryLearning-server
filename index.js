@@ -77,7 +77,7 @@ models.sequelize.sync({ focus: true }).then(function () {
 
 
   const io = require("socket.io")(server, {
-    transports: ["websocket"], 'path': '/newSocket',
+    'path': '/newSocket',
     cors: {
       origin: "https://inspirylearning.com",
     },
