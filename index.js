@@ -2,7 +2,6 @@ require("dotenv").config();
 const path = require("path");
 const cors = require("cors");
 const http = require("http");
-const httpProxy = require("http-proxy");
 const express = require("express");
 const utils = require("./utils/utils");
 const bodyParser = require("body-parser");
@@ -75,16 +74,11 @@ models.sequelize.sync({ focus: true }).then(function () {
   //  */
 
 
-  httpProxy
-    .createProxyServer({
-      target: "http://localhost:8000",
-      ws: true,
-    })
-    .listen(4000, "127.0.0.1");
+
 
   const io = require("socket.io")(server, {
     cors: {
-      origin: "*",
+      origin: "https://inspirylearning.com",
     },
   });
 
