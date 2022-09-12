@@ -25,12 +25,12 @@ const initiatePayment = (req, res) => {
     },
     redirect_urls: {
       return_url:
-        "http://server.inspirylearning.com/api/payment/success?assignmentId=" +
+        "https://inspirylearning.com/backend/api/payment/success?assignmentId=" +
         req.body.assignmentId +
         "&messageId=" +
         req.body.messageId,
       cancel_url:
-        "http://server.inspirylearning.com/api/payment/cancel",
+        "https://inspirylearning.com/backend/api/payment/cancel",
     },
     transactions: [
       {

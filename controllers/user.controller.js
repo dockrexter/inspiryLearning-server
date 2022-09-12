@@ -180,7 +180,7 @@ const sendPasswordResetLink = async (req, res) => {
       process.env.JWT_PRIVATE_KEY
     );
     // const link = `${process.env.FRONTEND_URL}/api/users/resetPassword?token=${token}`;
-    const link = `http://inspirylearning.com/resetPassword?token=${token}`
+    const link = `https://inspirylearning.com/resetPassword?token=${token}`
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: user.email,
