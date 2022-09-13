@@ -93,7 +93,7 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     data: {
       title: title,
       body: body,
-      assignmentId: assignmentId ? assignmentId : ""
+      assignmentId: assignmentId ? String(assignmentId) : ""
     },
 
     tokens: tokens,
