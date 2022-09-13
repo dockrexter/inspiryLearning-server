@@ -87,12 +87,13 @@ const getAllAdminTokens = async () => {
 };
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
-  body[assignmentId] = assignmentId;
+  // body[assignmentId] = assignmentId;
   const message = {
 
     data: {
       title: title,
-      body: body
+      body: body,
+      assignmentId: assignmentId ? assignmentId : ""
     },
 
     tokens: tokens,
