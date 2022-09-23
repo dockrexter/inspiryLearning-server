@@ -7,13 +7,14 @@ const add = async (req, res) => {
       token: req.body.token,
       userId: req.user.id,
     });
+    console.log(req.body.token);
     return res.status(200).json(
       response(200, "ok", "Token register successfully", {
         token: req.body.token,
       })
     )
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json(
       response(500, "error", "Something went Wrong"))
   }
