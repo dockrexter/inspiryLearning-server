@@ -215,7 +215,7 @@ const getAllNotifications = async (req, res) => {
         ["createdAt", "DESC"],
       ],
     });
-    console.log("Notifications=>: ", notifications)
+    // console.log("Notifications=>: ", notifications)
     return res
       .status(200)
       .json(response(200, "ok", "notifications fetched successfully", notifications));
@@ -229,7 +229,7 @@ const getAllNotifications = async (req, res) => {
 
 const updateReadNotifications = async (req, res) => {
   try {
-    console.log("Notifation Read: ", req.body.userId)
+    // console.log("Notifation Read: ", req.body.userId)
     await db.Notification.update(
       {
         isRead: 1,
@@ -246,7 +246,7 @@ const updateReadNotifications = async (req, res) => {
 }
 const updateSingleReadNotifications = async (req, res) => {
   try {
-    console.log("Notifation Read: ", req.body.id)
+    // console.log("Notifation Read: ", req.body.id)
     await db.Notification.update(
       {
         isRead: 1,
