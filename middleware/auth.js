@@ -5,7 +5,7 @@ var response = require("../utils/response")
 
 async function auth(req, res, next) {
     let token = req.header("token");
-    if (!token) return res.status(404).json(response(404, "error", "", {}));
+    if (!token) return res.status(404).json(response(404, "error", "token not found", {}));
     try {
         let user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         req.user = await db.User.findOne({ where: { id: user._id } });
