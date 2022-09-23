@@ -3,7 +3,7 @@ const response = require("../utils/response");
 
 const add = async (req, res) => {
   try {
-    const token = await db.FCMToken.create({
+    await db.FCMToken.create({
       token: req.body.token,
       userId: req.user.id,
     });
