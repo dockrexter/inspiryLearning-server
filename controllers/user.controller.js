@@ -37,8 +37,7 @@ const register = async (req, res) => {
       .status(200)
       .json(response(200, "ok", "user registerd successfully", userObj));
   } catch (error) {
-    return res.status(500)
-      .json(response(500, "error", "Something Went Wrong"));
+    return res.status(500).json(response(500, "error", "Something Went Wrong"));
   }
 };
 
@@ -83,17 +82,17 @@ const login = async (req, res) => {
     res
       .status(200)
       .json(response(200, "ok", "user logged in successfully", user));
-
   } catch (error) {
-    return res
-      .status(500)
-      .json(response(500, "error", "Somrthing went wrong"));
+    return res.status(500).json(response(500, "error", "Somrthing went wrong"));
   }
 };
 
 const changePassword = async (req, res) => {
   try {
-    const isValid = await bcrypt.compare(req.body.oldPassword, req.user.password);
+    const isValid = await bcrypt.compare(
+      req.body.oldPassword,
+      req.user.password
+    );
     if (!isValid)
       return res
         .status(401)
@@ -108,9 +107,7 @@ const changePassword = async (req, res) => {
       .status(200)
       .json(response(200, "ok", "password changed successfully", {}));
   } catch (error) {
-    return res
-      .status(500)
-      .json(response(500, "error", "Something Went Wrong"));
+    return res.status(500).json(response(500, "error", "Something Went Wrong"));
   }
 };
 
@@ -128,8 +125,7 @@ const updateUser = async (req, res) => {
       .status(200)
       .json(response(200, "ok", "user updated successfully", user));
   } catch (error) {
-    return res.status(500)
-      .json(response(500, "error", "Something Went Wrong"));
+    return res.status(500).json(response(500, "error", "Something Went Wrong"));
   }
 };
 
@@ -157,9 +153,7 @@ const resetPassword = async (req, res) => {
       .status(200)
       .json(response(200, "ok", "password changed successfully", {}));
   } catch (error) {
-    return res
-      .status(500)
-      .json(response(500, "error", "SomeThing Went Wrong"));
+    return res.status(500).json(response(500, "error", "SomeThing Went Wrong"));
   }
 };
 
@@ -180,7 +174,7 @@ const sendPasswordResetLink = async (req, res) => {
       process.env.JWT_PRIVATE_KEY
     );
     // const link = `${process.env.FRONTEND_URL}/api/users/resetPassword?token=${token}`;
-    const link = `https://inspirylearning.com/resetPassword?token=${token}`
+    const link = `https://inspirylearning.com/resetPassword?token=${token}`;
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: user.email,
@@ -188,7 +182,7 @@ const sendPasswordResetLink = async (req, res) => {
       html: `<p>Click on the link to reset your password</p><a href="${link}">${link}</a>`,
     };
     const transporter = await nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 465,
       secure: true,
       auth: {
@@ -201,9 +195,7 @@ const sendPasswordResetLink = async (req, res) => {
       .status(200)
       .json(response(200, "ok", "password reset link sent successfully", {}));
   } catch (error) {
-    return res
-      .status(500)
-      .json(response(500, "Error", "SomeThing Went Wrong"));
+    return res.status(500).json(response(500, "Error", "SomeThing Went Wrong"));
   }
 };
 
@@ -211,57 +203,89 @@ const getAllNotifications = async (req, res) => {
   try {
     const notifications = await db.Notification.findAll({
       where: { userID: req.user.id },
-      order: [
-        ["createdAt", "DESC"],
-      ],
+      order: [["createdAt", "DESC"]],
     });
-    // console.log("Notifications=>: ", notifications)
     return res
       .status(200)
-      .json(response(200, "ok", "notifications fetched successfully", notifications));
+      .json(
+        response(200, "ok", "notifications fetched successfully", notifications)
+      );
   } catch (error) {
-    return res
-      .status(500)
-      .json(response(500, "error", "Something Went Wrong"));
-
+    return res.status(500).json(response(500, "error", "Something Went Wrong"));
   }
-}
+};
 
 const updateReadNotifications = async (req, res) => {
   try {
-    // console.log("Notifation Read: ", req.body.userId)
     await db.Notification.update(
       {
         isRead: 1,
       },
       { where: { userID: req.body.userId } }
     );
-    return res.status(200)
-      .json(response(200, "ok", "Readed"));
+    return res.status(200).json(response(200, "ok", "Readed"));
   } catch (error) {
-    console.log("Error in Read Notifications=>", error)
-    return res.status(500)
+    console.log("Error in Read Notifications=>", error);
+    return res
+      .status(500)
       .json(response(500, "error", "Something Went Wrong", error));
   }
-}
+};
 const updateSingleReadNotifications = async (req, res) => {
   try {
-    // console.log("Notifation Read: ", req.body.id)
     await db.Notification.update(
       {
         isRead: 1,
       },
       { where: { id: req.body.id } }
     );
-    return res.status(200)
-      .json(response(200, "ok", "Readed"));
+    return res.status(200).json(response(200, "ok", "Readed"));
   } catch (error) {
-    return res.status(500)
+    return res
+      .status(500)
       .json(response(500, "error", "Something Went Wrong", error));
   }
-}
+};
+
+const removeUser = async (req, res) => {
+  try {
+    const isValid = await bcrypt.compare(req.body.password, req.user.password);
+    if (!isValid)
+      return res
+        .status(401)
+        .json(response(401, "error", "password is incorrect", {}));
+    const assignments = await db.Assignments.findAll({
+      where: { userId: req.user.id },
+    });
+    for (assignment in assignments)
+      await db.Attachments.destroy({
+        where: { assignmentId: assignment.id },
+      });
+    await db.Assignments.destroy({
+      where: { userId: req.user.id },
+    });
+    await db.Chats.destroy({
+      where: { userId: req.user.id },
+    });
+    await db.FCMTokens.destroy({
+      where: { userId: req.user.id },
+    });
+    await db.Notifications.destroy({
+      where: { userID: req.user.id },
+    });
+    await db.Users.destroy({
+      where: { id: req.user.id },
+    });
+    return res
+      .status(200)
+      .json(response(200, "ok", "user removed successfully", user));
+  } catch (error) {
+    return res.status(500).json(response(500, "error", "Something Went Wrong"));
+  }
+};
 
 module.exports = {
+  removeUser,
   sendPasswordResetLink,
   sendResetPasswordPage,
   getAllNotifications,

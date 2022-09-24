@@ -28,9 +28,6 @@ const remove = async (req, res) => {
         userId: req.user.id,
       },
     });
-    // if (row) {
-    //   await row.destroy();
-    // }
     return res.status(200).json(
       response(200, "ok", "Token removed successfully", {
         token: req.body.token,
