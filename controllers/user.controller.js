@@ -22,7 +22,7 @@ const register = async (req, res) => {
       phone: req.body.phone,
       password: req.body.password,
       role: req.body.role,
-      active: true,
+      active: 1,
     });
     var token = jwt.sign(
       {
@@ -257,7 +257,7 @@ const removeUser = async (req, res) => {
         .json(response(401, "error", "password is incorrect", {}));
 
     await db.User.update(
-      { active: false, },
+      { active: 0, },
       { where: { id: req.user.id } },
     );
     return res
