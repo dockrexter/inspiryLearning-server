@@ -49,6 +49,11 @@ const login = async (req, res) => {
       return res
         .status(401)
         .json(response(401, "error", "no user found with this email", {}));
+
+    if (req.user.active === 0) return res
+      .status(404)
+      .json(response(404, "error", "user not active", {}));
+
     const isValid = await bcrypt.compare(req.body.password, user.password);
 
     if (!isValid)
