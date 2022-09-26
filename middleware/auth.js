@@ -12,6 +12,9 @@ async function auth(req, res, next) {
         if (!req.user) return res
             .status(404)
             .json(response(404, "error", "user not found", {}));
+        if (!req.user.active) return res
+            .status(404)
+            .json(response(404, "error", "user not active", {}));
     } catch (error) {
         return res.status(401).json(response(401, "error", "Token invalid", {}));
     }

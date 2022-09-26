@@ -22,6 +22,7 @@ const register = async (req, res) => {
       phone: req.body.phone,
       password: req.body.password,
       role: req.body.role,
+      active: true,
     });
     var token = jwt.sign(
       {
@@ -254,28 +255,11 @@ const removeUser = async (req, res) => {
       return res
         .status(401)
         .json(response(401, "error", "password is incorrect", {}));
-    const assignments = await db.Assignments.findAll({
-      where: { userId: req.user.id },
-    });
-    for (assignment in assignments)
-      await db.Attachments.destroy({
-        where: { assignmentId: assignment.id },
-      });
-    await db.Assignments.destroy({
-      where: { userId: req.user.id },
-    });
-    await db.Chats.destroy({
-      where: { userId: req.user.id },
-    });
-    await db.FCMTokens.destroy({
-      where: { userId: req.user.id },
-    });
-    await db.Notifications.destroy({
-      where: { userID: req.user.id },
-    });
-    await db.Users.destroy({
-      where: { id: req.user.id },
-    });
+
+    await db.User.update(
+      { active: false, },
+      { where: { id: req.user.id } },
+    );
     return res
       .status(200)
       .json(response(200, "ok", "user removed successfully", user));
