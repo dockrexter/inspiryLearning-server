@@ -85,7 +85,7 @@ const login = async (req, res) => {
     );
     user.token = token;
 
-    res
+    return res
       .status(200)
       .json(response(200, "ok", "user logged in successfully", user));
   } catch (error) {
