@@ -37,7 +37,6 @@ const getUserAssignments = async (req, res) => {
 };
 
 const getAssignmentById = async (req, res) => {
-  // console.log("MSI APPLE: ",req.body.assignment_id)
   try {
     const assignments = await db.Assignment.findOne({
       where: { id: req.body.assignment_id },
@@ -152,9 +151,7 @@ const createUserAssignment = async (req, res) => {
       );
     }
     const fbtoken = await getAllAdminTokens()
-    console.log("FBTOKEN CHECK=>", fbtoken)
     if (fbtoken?.length) {
-      console.log("FBTOKEN CHECK=> in if", fbtoken)
       await sendFcmMessage(
         "New Assignment",
         `You Have New Assignment ${assignment.subject}`,
@@ -178,7 +175,6 @@ const createUserAssignment = async (req, res) => {
 const getCurrentMonthAssignments = async (req, res) => {
   try {
     const { current_month, current_year } = req.body;
-    console.log(`${current_year}-${current_month + 1}-01`)
 
     const assignments = await db.Assignment.findAll({
       where: {

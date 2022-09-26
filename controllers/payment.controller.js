@@ -167,7 +167,6 @@ const onCancel = (req, res) =>
 
 const rejectPayment = async (req, res) => {
   try {
-    console.log("messageID=>", req.body.messageId);
     await db.Chat.update(
       {
         paymentStatus: 2,
@@ -175,7 +174,6 @@ const rejectPayment = async (req, res) => {
       { where: { id: req.body.messageId } }
     );
     const chat = await db.Chat.findByPk(req.body.messageId);
-    console.log("chat object =>", chat, "User Object", req.user.role);
     if (req.user.role === "user") {
       await addNotification(
         req.user.id,
@@ -184,7 +182,6 @@ const rejectPayment = async (req, res) => {
         chat.assignmentId,
       );
       const fbtokenClient = await getTokensByUserId(chat.assignmentId);
-      console.log("Checking: ", fbtokenClient)
       if (fbtokenClient?.length) {
         await sendFcmMessage(
           "Payment Update",

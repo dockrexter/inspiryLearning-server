@@ -13,7 +13,7 @@ const addNotification = async (userId, message, title, assignmentId) => {
     message: message,
     title: title,
     assignmentID: assignmentId,
-    isRead: false
+    isRead: false,
   });
 };
 
@@ -28,27 +28,20 @@ const getUserIdByAssignmentId = async (assignmentId) => {
   const assignment = await db.Assignment.findOne({
     where: { id: assignmentId },
   });
-  console.log("USER ID IN ASSIGN=>", assignment.userId)
   return assignment.userId;
 };
 
 const getTokensByUserId = async (assignmentId) => {
-  console.log("Checking ID=>", assignmentId)
   const userId = await getUserIdByAssignmentId(assignmentId);
-  var tokens = []
+  var tokens = [];
   const token = await db.FCMToken.findAll({
     where: { userId },
   });
-  console.log("TOKEN OF USER: ", token)
   if (token.length > 0) {
     for (t of token) {
       tokens.push(t.token);
     }
   }
-  else {
-    console.log("I am in else");
-  }
-  console.log(tokens);
   return tokens;
 };
 
@@ -70,30 +63,24 @@ const getAllAdminTokens = async () => {
       const token = await db.FCMToken.findAll({
         where: { userId: admins[i].id },
       });
-      console.log(tokens);
       if (token.length > 0) {
         for (t of token) {
           tokens.push(t.token);
         }
       }
-      else {
-        console.log("I am in else");
-      }
       return tokens;
     }
   } catch (error) {
-    console.error("Token: ", error)
+    console.error("Token: ", error);
   }
 };
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
-
   const message = {
-
     data: {
       title: title,
       body: body,
-      assignmentId: assignmentId ? String(assignmentId) : ""
+      assignmentId: assignmentId ? String(assignmentId) : "",
     },
 
     tokens: tokens,
@@ -102,15 +89,10 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     admin
       .messaging()
       .sendMulticast(message)
-      .then((response) => {
-        console.log("Successfully sent message:", response);
-      })
-      .catch((error) => {
-        console.log("Error sending message:", error);
-      })
+      .then((response) => {})
+      .catch((error) => {});
   } catch (error) {
-    console.error("FCM: ", error)
-
+    console.error("FCM: ", error);
   }
 };
 

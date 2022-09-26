@@ -9,7 +9,6 @@ async function auth(req, res, next) {
     try {
         let user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         req.user = await db.User.findOne({ where: { id: user._id } });
-        console.log(req.user);
         if (!req.user) return res
             .status(404)
             .json(response(404, "error", "user not found", {}));

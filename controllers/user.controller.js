@@ -8,13 +8,43 @@ const response = require("../utils/response");
 const register = async (req, res) => {
   try {
     var email = req.body.email;
-    let user_email = await db.User.findOne({
+    let user = await db.User.findOne({
       where: { email: email },
     });
-    if (user_email)
+
+    if (user) {
+      const isValid = await bcrypt.compare(req.body.password, user.password);
+
+      if (user.active === 0 && isValid) {
+        const userx = await db.User.update(
+          { active: 1 },
+          { where: { email: email } }
+        );
+        if (userx) {
+          var token = jwt.sign(
+            {
+              _id: user.id,
+              email: user.email,
+              role: user.role,
+            },
+            process.env.JWT_PRIVATE_KEY
+          );
+
+          user.active = 1;
+          user.token = token;
+
+          return res
+            .status(200)
+            .json(response(200, "ok", "user active successfully", user));
+        }
+      }
+    }
+
+    if (user)
       return res
         .status(400)
-        .json(response(401, "error", "user with this email already exit", {}));
+        .json(response(401, "error", "user with this email already exist", {}));
+
     const newUser = await db.User.create({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -24,6 +54,7 @@ const register = async (req, res) => {
       role: req.body.role,
       active: 1,
     });
+
     var token = jwt.sign(
       {
         _id: newUser.id,
@@ -32,13 +63,17 @@ const register = async (req, res) => {
       },
       process.env.JWT_PRIVATE_KEY
     );
+
     var userObj = newUser;
     userObj.token = token;
+
     res
       .status(200)
       .json(response(200, "ok", "user registerd successfully", userObj));
   } catch (error) {
-    return res.status(500).json(response(500, "error", "Something Went Wrong"));
+    return res
+      .status(500)
+      .json(response(500, "error", "Something Went Wrong", {}));
   }
 };
 
@@ -232,7 +267,6 @@ const updateReadNotifications = async (req, res) => {
     );
     return res.status(200).json(response(200, "ok", "Readed"));
   } catch (error) {
-    console.log("Error in Read Notifications=>", error);
     return res
       .status(500)
       .json(response(500, "error", "Something Went Wrong", error));
@@ -262,10 +296,8 @@ const removeUser = async (req, res) => {
         .status(401)
         .json(response(401, "error", "password is incorrect", {}));
 
-    const user = await db.User.update(
-      { active: 0 },
-      { where: { id: req.user.id } }
-    );
+    await db.User.update({ active: 0 }, { where: { id: req.user.id } });
+    const user = await db.User.findOne({ where: { id: req.user.id } });
     return res
       .status(200)
       .json(response(200, "ok", "user removed successfully", user));
