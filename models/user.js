@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     phone: DataTypes.STRING,
     token: DataTypes.STRING,
-    role: DataTypes.STRING
+    role: DataTypes.STRING,
+    active: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'User',
-
   });
 
   User.beforeCreate(async (user, options) => {
