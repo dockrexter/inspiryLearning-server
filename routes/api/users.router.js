@@ -22,6 +22,6 @@ router.post("/resetPassword", userController.resetPassword);
 router.get("/resetPassword", userController.sendResetPasswordPage);
 router.post("/sendPasswordResetLink", userController.sendPasswordResetLink);
 
-router.post("/remove", auth, userController.removeUser);
+router.post("/removeUser", auth, userController.removeUser);
 
 module.exports = router;
