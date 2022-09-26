@@ -50,9 +50,10 @@ const login = async (req, res) => {
         .status(401)
         .json(response(401, "error", "no user found with this email", {}));
 
-    if (req.user.active === 0) return res
-      .status(404)
-      .json(response(404, "error", "user not active", {}));
+    if (user.active === 0)
+      return res
+        .status(404)
+        .json(response(404, "error", "user not active", {}));
 
     const isValid = await bcrypt.compare(req.body.password, user.password);
 
@@ -261,16 +262,17 @@ const removeUser = async (req, res) => {
         .status(401)
         .json(response(401, "error", "password is incorrect", {}));
 
-    await db.User.update(
-      { active: 0, },
-      { where: { id: req.user.id } },
+    const user = await db.User.update(
+      { active: 0 },
+      { where: { id: req.user.id } }
     );
     return res
       .status(200)
       .json(response(200, "ok", "user removed successfully", user));
   } catch (error) {
-    console.log(error);
-    return res.status(500).json(response(500, "error", "Something Went Wrong", {}));
+    return res
+      .status(500)
+      .json(response(500, "error", "Something Went Wrong", {}));
   }
 };
 

@@ -198,7 +198,7 @@ models.sequelize.sync({ focus: true }).then(function () {
    * Listen on provided port, on all network interfaces.
    */
 
-  server.listen(port, "127.0.0.1", () => {
+  server.listen(port, "0.0.0.0", () => {
     console.log("backend running at port", port);
   });
 });
