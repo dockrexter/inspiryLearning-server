@@ -269,7 +269,8 @@ const removeUser = async (req, res) => {
       .status(200)
       .json(response(200, "ok", "user removed successfully", user));
   } catch (error) {
-    return res.status(500).json(response(500, "error", "Something Went Wrong"));
+    console.log(error);
+    return res.status(500).json(response(500, "error", "Something Went Wrong", {}));
   }
 };
 
