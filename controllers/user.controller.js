@@ -13,9 +13,10 @@ const register = async (req, res) => {
     });
 
     if (user) {
-      const isValid = await bcrypt.compare(req.body.password, user.password);
+      // const isValid = await bcrypt.compare(req.body.password, user.password);
 
-      if (user.active === 0 && isValid) {
+      // if (user.active === 0 && isValid) {
+      if (user.active === 0) {
         const userx = await db.User.update(
           { active: 1 },
           { where: { email: email } }
