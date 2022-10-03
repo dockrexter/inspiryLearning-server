@@ -217,9 +217,10 @@ const rejectPayment = async (req, res) => {
 
   }
   catch (error) {
+    console.log(error);
     return res
       .status(500)
-      .json(response(500, "ok", "something went wrong", {}));
+      .json(response(500, "error", "something went wrong", {}));
 
   }
 
