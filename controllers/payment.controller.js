@@ -198,7 +198,7 @@ const rejectPayment = async (req, res) => {
         await addNotification(
           adminId,
           `Payment has been Rejected/Withdrawed`,
-          "Payment status change",
+          "Payment Update",
           chat.assignmentId,
         );
       }
