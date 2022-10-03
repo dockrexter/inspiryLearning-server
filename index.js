@@ -78,12 +78,14 @@ models.sequelize.sync({ focus: true }).then(function () {
 
 
 
-  const io = require("socket.io")(server, {
+  const io = require("socket.io")(server, 
+    {
     'path': '/newSocket',
     cors: {
-      origin: "https://inspirylearning.com",
+      origin: "*",
     },
-  });
+  }
+  );
 
   io.on("connection", (socket) => {
     socket.on("join", async ({ user_id, assignment_id }) => {
@@ -194,7 +196,7 @@ models.sequelize.sync({ focus: true }).then(function () {
    * Listen on provided port, on all network interfaces.
    */
 
-  server.listen(port, "0.0.0.0", () => {
+  server.listen(port, "127.0.0.1", () => {
     console.log("backend running at port", port);
   });
 });
