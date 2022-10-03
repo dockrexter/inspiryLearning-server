@@ -174,7 +174,7 @@ const rejectPayment = async (req, res) => {
       { where: { id: req.body.messageId } }
     );
     const chat = await db.Chat.findByPk(req.body.messageId);
-    if (req.user.role === "user") {
+    if (req.user.role !== "user") {
       await addNotification(
         req.user.id,
         `Payment has been Rejected/Withdrawed `,
