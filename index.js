@@ -104,6 +104,10 @@ models.sequelize.sync({ focus: true }).then(function () {
       socket.on("typing", (data) => {
         socket.broadcast.to(user.room).emit("typing", data);
       });
+      socket.on("paymentStatus", async () => {
+        const chat = await getChat(assignment_id);
+        socket.broadcast.to(user.room).emit("paymentUpdate", chat);
+      });
 
       const chat = await getChat(assignment_id);
 
@@ -112,6 +116,7 @@ models.sequelize.sync({ focus: true }).then(function () {
       socket.broadcast
         .to(user.room)
         .emit("userJoined", { message: `${user.name} has joined!` });
+
 
       socket.on("sendMessage", async (data) => {
         const { error, response } = await postChat(data);

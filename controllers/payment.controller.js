@@ -7,6 +7,7 @@ const {
   sendFcmMessage,
   getAllAdminTokens,
   getTokensByUserId,
+  getAllAdminIds
 } = require("../utils/utils");
 
 paypal.configure({
@@ -174,7 +175,7 @@ const rejectPayment = async (req, res) => {
       { where: { id: req.body.messageId } }
     );
     const chat = await db.Chat.findByPk(req.body.messageId);
-    if (req.user.role === "user") {
+    if (req.user.role !== "user") {
       await addNotification(
         req.user.id,
         `Payment has been Rejected/Withdrawed `,
@@ -197,7 +198,7 @@ const rejectPayment = async (req, res) => {
         await addNotification(
           adminId,
           `Payment has been Rejected/Withdrawed`,
-          "Payment status change",
+          "Payment Update",
           chat.assignmentId,
         );
       }
@@ -217,9 +218,10 @@ const rejectPayment = async (req, res) => {
 
   }
   catch (error) {
+    console.log(error);
     return res
       .status(500)
-      .json(response(500, "ok", "something went wrong", {}));
+      .json(response(500, "error", "something went wrong", {}));
 
   }
 
