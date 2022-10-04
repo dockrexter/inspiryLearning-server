@@ -104,7 +104,7 @@ models.sequelize.sync({ focus: true }).then(function () {
       });
       socket.on("paymentStatus", async () => {
         const chat = await getChat(assignment_id);
-        socket.broadcast.to(user.room).emit("paymentUpdate", chat);
+        socket.to(user.room).emit("paymentUpdate", chat);
       });
 
       const chat = await getChat(assignment_id);
