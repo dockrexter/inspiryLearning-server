@@ -3,10 +3,18 @@ const response = require("../utils/response");
 
 const add = async (req, res) => {
   try {
-    await db.FCMToken.create({
-      token: req.body.token,
-      userId: req.user.id,
+    const prev = await db.FCMToken.findOne({
+      where: {
+        token: req.body.token,
+        userId: req.user.id,
+      }
     });
+    if (!prev) {
+      await db.FCMToken.create({
+        token: req.body.token,
+        userId: req.user.id,
+      });
+    }
     return res.status(200).json(
       response(200, "ok", "Token register successfully", {
         token: req.body.token,
