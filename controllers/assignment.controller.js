@@ -36,6 +36,18 @@ const getUserAssignments = async (req, res) => {
   }
 };
 
+const deleteAssignment = async (req,res) =>{
+  try {
+    const {id} = req.body;
+    const assignment = await db.Assignment.destroy({ where: { id: id } });
+    return res.status(200).json(response(200, "ok", "Delete Successfull", assignment));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "error", "Something went wrong"));
+  }
+}
+
 const getAssignmentById = async (req, res) => {
   try {
     const assignments = await db.Assignment.findOne({
@@ -219,4 +231,5 @@ module.exports = {
   createUserAssignment,
   getCurrentMonthAssignments,
   getAssignmentById,
+  deleteAssignment,
 };
