@@ -12,7 +12,7 @@ const auth = require("../../middleware/auth");
 router.post("/updateStatus", auth, assignmentController.updateStatus);
 router.post("/updateAssignee", auth, assignmentController.updateAssignee);
 router.post("/getAttachments", auth, assignmentController.getAttachments);
-router.post("/deleteassignment", auth, assignmentController.deleteAssignment);
+router.delete("/deleteassignment", auth, assignmentController.deleteAssignment);
 
 router.get(
   "/getUserAssignments",
