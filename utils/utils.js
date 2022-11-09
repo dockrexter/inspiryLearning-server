@@ -77,7 +77,6 @@ const getAllAdminTokens = async () => {
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
-    notification: { title: 'Price drop', body: '5% off all electronics' },
     data: {
       title: title,
       body: body,
