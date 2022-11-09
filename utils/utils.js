@@ -85,26 +85,26 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     apns: {
       payload: {
         aps: {
-        contentAvailable: true,
+          contentAvailable: true,
         },
       },
       headers: {
-      'apns-push-type': 'background',
-      'apns-priority': '5',
-      'apns-topic': '', // your app bundle identifier
+        'apns-push-type': 'background',
+        'apns-priority': '5',
+        'apns-topic': 'net.inspiry.inspiry-learning', // your app bundle identifier
       },
     },
-    content_available : true,
+    content_available: true,
     mutable_content: true,
-    priority : "high",
+    priority: "high",
     tokens: tokens,
   };
   try {
     admin
       .messaging()
       .sendMulticast(message)
-      .then((response) => {})
-      .catch((error) => {});
+      .then((response) => { })
+      .catch((error) => { });
   } catch (error) {
     console.error("FCM: ", error);
   }
