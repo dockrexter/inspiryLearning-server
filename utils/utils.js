@@ -84,8 +84,16 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     },
     apns: {
       payload: {
+        // aps: {
+        //   contentAvailable: 1,
+        // },
         aps: {
-          contentAvailable: 1,
+          category: "SECRET",
+          "mutable-content": 1,
+          alert: {
+            title: "Secret Message!",
+            body: "(Encrypted)"
+          },
         },
       },
       headers: {
