@@ -82,6 +82,18 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
       body: body,
       assignmentId: assignmentId ? String(assignmentId) : "",
     },
+    apns: {
+      payload: {
+        aps: {
+        contentAvailable: true,
+        },
+      },
+      headers: {
+      'apns-push-type': 'background',
+      'apns-priority': '5',
+      'apns-topic': '', // your app bundle identifier
+      },
+    },
     content_available : true,
     mutable_content: true,
     priority : "high",
