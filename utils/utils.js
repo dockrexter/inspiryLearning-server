@@ -93,11 +93,13 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     },
     apns: {
       payload: {
-        "alert": {
-          "body": "great match!",
-          "title": "Portugal vs. Denmark",
+        "aps": {
+          "alert": {
+            "body": "great match!",
+            "title": "Portugal vs. Denmark",
+          },
+          "badge": 1,
         },
-        "badge": 1,
       },
       headers: {
         'apns-push-type': 'background',
