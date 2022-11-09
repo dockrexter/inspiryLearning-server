@@ -77,7 +77,6 @@ const getAllAdminTokens = async () => {
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
-
     data: {
       title: title,
       body: body,
@@ -85,12 +84,8 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     },
     apns: {
       payload: {
-        "aps": {
-          "alert": {
-            "body": "great match!",
-            "title": "Portugal vs. Denmark",
-          },
-          "badge": 1,
+        aps: {
+          contentAvailable: true,
         },
       },
       headers: {
