@@ -85,7 +85,8 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     apns: {
       payload: {
         aps: {
-          contentAvailable: true,
+          // contentAvailable: true,
+          "interruption-level": "critical"
         },
       },
       headers: {
