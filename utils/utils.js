@@ -77,6 +77,15 @@ const getAllAdminTokens = async () => {
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
+    notification: {
+      "body": "sample body",
+      "OrganizationId": "2",
+      "content_available": true,
+      "mutable_content": true,
+      "priority": "high",
+      "subtitle": "sample sub-title",
+      "Title": "hello"
+    },
     data: {
       title: title,
       body: body,
