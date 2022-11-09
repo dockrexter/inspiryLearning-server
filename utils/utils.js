@@ -78,8 +78,8 @@ const getAllAdminTokens = async () => {
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
     notification: {
-      "title": "Portugal vs. Denmark",
-      "body": "great match!"
+      "title": title,
+      "body": body
     },
     data: {
       title: title,
