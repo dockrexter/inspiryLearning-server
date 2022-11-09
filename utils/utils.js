@@ -82,7 +82,9 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
       body: body,
       assignmentId: assignmentId ? String(assignmentId) : "",
     },
-
+    content_available : true,
+    mutable_content: true,
+    priority : "high",
     tokens: tokens,
   };
   try {
