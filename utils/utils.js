@@ -80,8 +80,8 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     tokens: tokens,
     // content_available: true,
     notification: {
-      title: "hello",
-      body: `I ma her`,
+      title: `${title}`,
+      body: `${body}`,
     },
     data: {
       title: title,
