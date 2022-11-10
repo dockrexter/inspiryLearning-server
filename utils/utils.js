@@ -78,7 +78,7 @@ const getAllAdminTokens = async () => {
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
     tokens: tokens,
-    content_available: true,
+    // content_available: true,
     notification: {
       title: "hello",
       body: `I ma her`,
@@ -88,22 +88,22 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
       body: body,
       assignmentId: assignmentId ? String(assignmentId) : "",
     },
-    android: {
-      priority: "high",
-    },
-    // Add APNS (Apple) config
-    apns: {
-      payload: {
-        aps: {
-          contentAvailable: true,
-        },
-      },
-      headers: {
-        "apns-push-type": "background",
-        "apns-priority": "5", // Must be `5` when `contentAvailable` is set to true.
-        "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
-      },
-    },
+    // android: {
+    //   priority: "high",
+    // },
+    // // Add APNS (Apple) config
+    // apns: {
+    //   payload: {
+    //     aps: {
+    //       contentAvailable: true,
+    //     },
+    //   },
+    //   headers: {
+    //     "apns-push-type": "background",
+    //     "apns-priority": "5", // Must be `5` when `contentAvailable` is set to true.
+    //     "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
+    //   },
+    // },
 
 
   };
