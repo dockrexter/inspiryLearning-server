@@ -77,39 +77,29 @@ const getAllAdminTokens = async () => {
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
-    notification: {
-      "title": "Portugal vs. Denmark",
-      "body": "great match!"
-    },
+    tokens: tokens,
     data: {
       title: title,
       body: body,
       assignmentId: assignmentId ? String(assignmentId) : "",
     },
-    // apns: {
-    //   payload: {
-    //     // aps: {
-    //     //   contentAvailable: 1,
-    //     // },
-    //     aps: {
-    //       category: "SECRET",
-    //       "mutable-content": 1,
-    //       alert: {
-    //         title: "Secret Message!",
-    //         body: "(Encrypted)"
-    //       },
-    //     },
-    //   },
-    //   headers: {
-    //     'apns-push-type': 'background',
-    //     'apns-priority': '5',
-    //     'apns-topic': 'net.inspiry.inspiry-learning', // your app bundle identifier
-    //   },
-    // },
-    // content_available: true,
-    // mutable_content: true,
-    // priority: "high",
-    tokens: tokens,
+    android: {
+      priority: "high",
+    },
+    // Add APNS (Apple) config
+    apns: {
+      payload: {
+        aps: {
+          contentAvailable: true,
+        },
+      },
+      headers: {
+        "apns-push-type": "background",
+        "apns-priority": "5", // Must be `5` when `contentAvailable` is set to true.
+        "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
+      },
+    },
+
   };
   try {
     admin
