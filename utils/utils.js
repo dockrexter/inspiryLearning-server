@@ -80,8 +80,8 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     tokens: tokens,
     content_available: true,
     notification: {
-      title: `${title}`,
-      body: `${body}`,
+      title: "hello",
+      body: `I ma her`,
     },
     data: {
       title: title,
@@ -111,7 +111,9 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
     admin
       .messaging()
       .sendMulticast(message)
-      .then((response) => { })
+      .then((response) => {
+        console.log(response, "message sent")
+      })
       .catch((error) => { });
   } catch (error) {
     console.error("FCM: ", error);
