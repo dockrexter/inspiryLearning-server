@@ -78,6 +78,7 @@ const getAllAdminTokens = async () => {
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
     tokens: tokens,
+    content_available: true,
     data: {
       title: title,
       body: body,
@@ -99,6 +100,7 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
         "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
       },
     },
+
 
   };
   try {
