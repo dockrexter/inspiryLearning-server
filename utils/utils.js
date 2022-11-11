@@ -96,15 +96,11 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
       payload: {
         aps: {
           contentAvailable: true,
-          alert: {
-            body: "Acme message received from Johnny Appleseed",
-          },
-          badge: 3,
         },
       },
       headers: {
         "apns-push-type": "background",
-        "apns-priority": "5", // Must be `5` when `contentAvailable` is set to true.
+        "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
         "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
       },
     },
