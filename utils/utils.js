@@ -79,10 +79,10 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
     tokens: tokens,
     // content_available: true,
-    // notification: {
-    //   title: `${title}`,
-    //   body: `${body}`,
-    // },
+    notification: {
+      title: `${title}`,
+      body: `${body}`,
+    },
     data: {
       title: title,
       body: body,
@@ -100,7 +100,7 @@ const sendFcmMessage = async (title, body, tokens, assignmentId) => {
       },
       headers: {
         "apns-push-type": "background",
-        "apns-priority": "10", // Must be `5` when `contentAvailable` is set to true.
+        "apns-priority": "5", // Must be `5` when `contentAvailable` is set to true.
         "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
       },
     },
