@@ -334,7 +334,7 @@ const chatSync = async(req, res) => {
     const sync = await db.Chat.sync({force: true});
     res.status(208).json(response(208, "ok", "Sync Successfull", sync))
   } catch (error) {
-    console.log(error);
+   // console.log(error);
     return res
       .status(500)
       .json(response(500, "error", "Something went wrong"));
