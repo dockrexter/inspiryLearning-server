@@ -199,7 +199,18 @@ const resetPassword = async (req, res) => {
     return res.status(500).json(response(500, "error", "SomeThing Went Wrong"));
   }
 };
-
+const deleteUser = async(req,res) => {
+  try {
+    const {email} = req.body;
+    const user = await db.User.destroy({ where: { email: email } });
+    return res.status(200).json(response(200, "ok", "Delete Successfull", user));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "error", "Something went wrong", error));
+    
+  }
+}
 const sendPasswordResetLink = async (req, res) => {
   try {
     const user = await db.User.findOne({ where: { email: req.body.email } });
@@ -257,7 +268,16 @@ const getAllNotifications = async (req, res) => {
     return res.status(500).json(response(500, "error", "Something Went Wrong"));
   }
 };
-
+const notifySync = async(req, res) => {
+  try {
+    const sync = await db.Notification.sync({force: true});
+    res.status(208).json(response(208, "ok", "Sync Successfull", sync))
+  } catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "error", "Something went wrong"));
+  }
+}
 const updateReadNotifications = async (req, res) => {
   try {
     await db.Notification.update(
@@ -273,6 +293,7 @@ const updateReadNotifications = async (req, res) => {
       .json(response(500, "error", "Something Went Wrong", error));
   }
 };
+
 const updateSingleReadNotifications = async (req, res) => {
   try {
     await db.Notification.update(
@@ -308,6 +329,16 @@ const removeUser = async (req, res) => {
       .json(response(500, "error", "Something Went Wrong", {}));
   }
 };
+const chatSync = async(req, res) => {
+  try {
+    const sync = await db.chat.sync({force: true});
+    res.status(208).json(response(208, "ok", "Sync Successfull", sync))
+  } catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "error", "Something went wrong"));
+  }
+}
 
 module.exports = {
   removeUser,
@@ -321,4 +352,7 @@ module.exports = {
   updateUser,
   register,
   login,
+  notifySync,
+  chatSync,
+  deleteUser,
 };

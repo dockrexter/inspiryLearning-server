@@ -24,4 +24,5 @@ const postChat = async (payload) => {
 }
 };
 
+
 module.exports = { getChat, postChat };

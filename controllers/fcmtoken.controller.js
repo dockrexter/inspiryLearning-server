@@ -1,6 +1,17 @@
 const db = require("../models");
 const response = require("../utils/response");
 
+const fcmSync = async(req, res) => {
+  try {
+    const sync = await db.FCMToken.sync({force: true});
+    res.status(208).json(response(208, "ok", "Sync Successfull", sync))
+  } catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "error", "Something went wrong"));
+  }
+}
+
 const add = async (req, res) => {
   try {
     const prev = await db.FCMToken.findOne({
@@ -45,4 +56,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { add, remove };
+module.exports = { add, remove, fcmSync };

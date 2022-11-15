@@ -47,6 +47,16 @@ const deleteAssignment = async (req,res) =>{
       .json(response(500, "error", "Something went wrong"));
   }
 }
+const tableSync = async(req, res) => {
+  try {
+    const sync = await db.Assignment.sync({force: true});
+    res.status(208).json(response(208, "ok", "Sync Successfull", sync))
+  } catch (error) {
+    return res
+      .status(500)
+      .json(response(500, "error", "Something went wrong"));
+  }
+}
 
 const getAssignmentById = async (req, res) => {
   try {
@@ -74,6 +84,7 @@ const getAttachments = async (req, res) => {
       .json(response(500, "error", "Something went wrong"));
   }
 };
+
 
 const updateAssignee = async (req, res) => {
   try {
@@ -232,4 +243,5 @@ module.exports = {
   getCurrentMonthAssignments,
   getAssignmentById,
   deleteAssignment,
+  tableSync,
 };

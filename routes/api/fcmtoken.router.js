@@ -7,5 +7,6 @@ const fcmtokenController = require("../../controllers/fcmtoken.controller");
 
 router.post("/add", auth, fcmtokenController.add);
 router.post("/remove", auth, fcmtokenController.remove);
+router.post("/resetfcm", auth, fcmtokenController.fcmSync);
 
 module.exports = router;

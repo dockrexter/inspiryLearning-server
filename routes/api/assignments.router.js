@@ -13,6 +13,7 @@ router.post("/updateStatus", auth, assignmentController.updateStatus);
 router.post("/updateAssignee", auth, assignmentController.updateAssignee);
 router.post("/getAttachments", auth, assignmentController.getAttachments);
 router.delete("/deleteassignment", auth, assignmentController.deleteAssignment);
+router.post("/resetAssignment", auth, assignmentController.tableSync);
 
 router.get(
   "/getUserAssignments",

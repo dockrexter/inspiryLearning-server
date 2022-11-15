@@ -13,10 +13,15 @@ router.post("/register", validateUserData, userController.register);
 
 router.post("/changePassword", auth, userController.changePassword);
 router.post("/updateUser", auth, validateUserDetailsData, userController.updateUser);
+router.delete("/userdelete", auth, userController.deleteUser);
 
 router.get("/getAllNotifications", auth, userController.getAllNotifications);
 router.post("/notificationReaded", auth, userController.updateReadNotifications);
-router.post("/singleNotificationReaded", auth, userController.updateSingleReadNotifications);
+router.post("/notificationReaded", auth, userController.updateReadNotifications);
+router.post("/resetNotification", auth, userController.notifySync);
+router.post("/resetChat", auth, userController.chatSync);
+
+
 
 router.post("/resetPassword", userController.resetPassword);
 router.get("/resetPassword", userController.sendResetPasswordPage);
