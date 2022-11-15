@@ -77,34 +77,45 @@ const getAllAdminTokens = async () => {
 
 const sendFcmMessage = async (title, body, tokens, assignmentId) => {
   const message = {
+    tokens: tokens,
+    // content_available: true,
+    notification: {
+      title: `${title}`,
+      body: `${body}`,
+    },
     data: {
       title: title,
       body: body,
       assignmentId: assignmentId ? String(assignmentId) : "",
     },
+    android: {
+      priority: "high",
+    },
+    // // Add APNS (Apple) config
     apns: {
       payload: {
         aps: {
-        contentAvailable: true,
+          sound: "default"
         },
       },
-      headers: {
-      'apns-push-type': 'background',
-      'apns-priority': '5',
-      'apns-topic': '', // your app bundle identifier
-      },
-    },
-    content_available : true,
-    mutable_content: true,
-    priority : "high",
-    tokens: tokens,
+    }
+    //   headers: {
+    //     "apns-push-type": "background",
+    //     "apns-priority": "5", // Must be `5` when `contentAvailable` is set to true.
+    //     "apns-topic": "inet.inspiry.inspiry-learning", // bundle identifier
+    //   },
+    // },
+
+
   };
   try {
     admin
       .messaging()
       .sendMulticast(message)
-      .then((response) => {})
-      .catch((error) => {});
+      .then((response) => {
+        console.log(response, "message sent")
+      })
+      .catch((error) => { });
   } catch (error) {
     console.error("FCM: ", error);
   }

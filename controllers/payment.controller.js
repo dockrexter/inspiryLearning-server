@@ -10,14 +10,20 @@ const {
   getAllAdminIds
 } = require("../utils/utils");
 
+// paypal.configure({
+//   mode: "sandbox", //sandbox or live
+//   client_id:
+//     "ATvP70Gwt-cjnGs3hBKCmts_81KNb8H6eGSz2YQSN2jDLdL7-Y-Fh7rDmmkEYPzd6RmZdM6W8PfOJD36",
+//   client_secret:
+//     "EOXlEENgOKkkPqNAWoZwPrLCVehKLzXTdbulyqCRluMV7zXW9GRE4DkbBbMBvTSNKUmNP7hO3jtgld-h",
+// });
 paypal.configure({
-  mode: "sandbox", //sandbox or live
+  mode: "live", //sandbox or live
   client_id:
-    "ATvP70Gwt-cjnGs3hBKCmts_81KNb8H6eGSz2YQSN2jDLdL7-Y-Fh7rDmmkEYPzd6RmZdM6W8PfOJD36",
+    "AWYAHFez8uJCI_9Qyh3xmdvZfowiuUAG9ShCL9Gd77ka8qETis7ddBu8xVC2OCsIzsQO1GhTij1DxRgO",
   client_secret:
-    "EOXlEENgOKkkPqNAWoZwPrLCVehKLzXTdbulyqCRluMV7zXW9GRE4DkbBbMBvTSNKUmNP7hO3jtgld-h",
+    "ELvoMHvb1BZAOy6wA2XRlNe74TUMUFifWWaT5a5NwFL86tWqM7DrbHDJ1GcFp5MF9ZEag3qGsjCp3h_l",
 });
-
 const initiatePayment = (req, res) => {
   const create_payment_json = {
     intent: "sale",
