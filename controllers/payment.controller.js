@@ -1,6 +1,13 @@
 const db = require("../models");
 const paypal = require("paypal-rest-sdk");
 const response = require("../utils/response");
+
+const urlpro = "https://inspirylearning.com/backend/api/payment/success?assignmentId=";
+const devurl = "http://localhost:8080/api/payment/success?assignmentId=";
+const paymentCancleUrlpro = "https://inspirylearning.com/backend/api/payment/cancel";
+const paymentCancleUrlDev = "http://localhost:8080/api/payment/cancel";
+
+
 const {
   getUserRole,
   addNotification,
@@ -32,12 +39,12 @@ const initiatePayment = (req, res) => {
     },
     redirect_urls: {
       return_url:
-        "https://inspirylearning.com/backend/api/payment/success?assignmentId=" +
+         urlpro +
         req.body.assignmentId +
         "&messageId=" +
-        req.body.messageId,
+        req.body.messageId  + "&userId=" + req.user.id ,
       cancel_url:
-        "https://inspirylearning.com/backend/api/payment/cancel",
+        paymentCancleUrlpro,
     },
     transactions: [
       {
@@ -116,14 +123,16 @@ const onSuccess = (req, res) => {
           },
           { where: { id: req.query.assignmentId } }
         );
+        console.log(req.query.userId);
         await addNotification(
-          req.user.id,
+          req.query.userId,
           `Payment successfully received for Assignment`,
           "Payment Update",
           req.query.assignmentId
         );
         const fbtoken = await getAllAdminTokens()
         if (fbtoken?.length) {
+          console.log(fbtoken);
           await sendFcmMessage(
             "Payment Update",
             `Payment successfully received for Assignment`,
