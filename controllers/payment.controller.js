@@ -210,7 +210,7 @@ const rejectPayment = async (req, res) => {
       { where: { id: req.body.messageId } }
     );
     const chat = await db.Chat.findByPk(req.body.messageId);
-    if (req.user.role !== "user") {
+    if (req.user.role != "user") {
       await addNotification(
         req.user.id,
         `Payment has been Rejected/Withdrawed `,
@@ -237,7 +237,7 @@ const rejectPayment = async (req, res) => {
           chat.assignmentId,
         );
       }
-      const fbtoken = getAllAdminTokens();
+      const fbtoken = await getAllAdminTokens();
       if (fbtoken?.length) {
         await sendFcmMessage(
           "Payment Update",
