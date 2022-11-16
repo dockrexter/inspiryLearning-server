@@ -3,10 +3,11 @@ const paypal = require("paypal-rest-sdk");
 const response = require("../utils/response");
 
 const urlpro = "https://inspirylearning.com/backend/api/payment/success?assignmentId=";
-const devurl = "http://localhost:8080/api/payment/success?assignmentId=";
-const paymentCancleUrlpro = "https://inspirylearning.com/backend/api/payment/cancel";
-const paymentCancleUrlDev = "http://localhost:8080/api/payment/cancel";
 const redirectClintUrl = "https://inspirylearning.com/dashboard/assignmentdetailsnotify"
+const paymentCancleUrlpro = "https://inspirylearning.com/backend/api/payment/cancel";
+//..................//
+const devurl = "http://localhost:8080/api/payment/success?assignmentId=";
+const paymentCancleUrlDev = "http://localhost:8080/api/payment/cancel";
 const redirectClintUrlDev = "http://localhost:3000/dashboard/assignmentdetailsnotify"
 
 
@@ -20,20 +21,20 @@ const {
   getAllAdminIds
 } = require("../utils/utils");
 
-paypal.configure({
-  mode: "sandbox", //sandbox or live
-  client_id:
-    "ATvP70Gwt-cjnGs3hBKCmts_81KNb8H6eGSz2YQSN2jDLdL7-Y-Fh7rDmmkEYPzd6RmZdM6W8PfOJD36",
-  client_secret:
-    "EOXlEENgOKkkPqNAWoZwPrLCVehKLzXTdbulyqCRluMV7zXW9GRE4DkbBbMBvTSNKUmNP7hO3jtgld-h",
-});
 // paypal.configure({
-//   mode: "live", //sandbox or live
+//   mode: "sandbox", //sandbox or live
 //   client_id:
-//     "AWYAHFez8uJCI_9Qyh3xmdvZfowiuUAG9ShCL9Gd77ka8qETis7ddBu8xVC2OCsIzsQO1GhTij1DxRgO",
+//     "ATvP70Gwt-cjnGs3hBKCmts_81KNb8H6eGSz2YQSN2jDLdL7-Y-Fh7rDmmkEYPzd6RmZdM6W8PfOJD36",
 //   client_secret:
-//     "ELvoMHvb1BZAOy6wA2XRlNe74TUMUFifWWaT5a5NwFL86tWqM7DrbHDJ1GcFp5MF9ZEag3qGsjCp3h_l",
+//     "EOXlEENgOKkkPqNAWoZwPrLCVehKLzXTdbulyqCRluMV7zXW9GRE4DkbBbMBvTSNKUmNP7hO3jtgld-h",
 // });
+paypal.configure({
+  mode: "live", //sandbox or live
+  client_id:
+    "AWYAHFez8uJCI_9Qyh3xmdvZfowiuUAG9ShCL9Gd77ka8qETis7ddBu8xVC2OCsIzsQO1GhTij1DxRgO",
+  client_secret:
+    "ELvoMHvb1BZAOy6wA2XRlNe74TUMUFifWWaT5a5NwFL86tWqM7DrbHDJ1GcFp5MF9ZEag3qGsjCp3h_l",
+});
 const initiatePayment = (req, res) => {
     const create_payment_json = {
       intent: "sale",
