@@ -81,7 +81,7 @@ models.sequelize.sync({ focus: true }).then(function () {
   const io = require("socket.io")(server, {
     'path': '/newSocket',
     cors: {
-      origin: "https://inspirylearning.com",
+      origin: "*",
     },
   });
 

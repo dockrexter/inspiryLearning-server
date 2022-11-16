@@ -17,7 +17,7 @@ router.delete("/userdelete", auth, userController.deleteUser);
 
 router.get("/getAllNotifications", auth, userController.getAllNotifications);
 router.post("/notificationReaded", auth, userController.updateReadNotifications);
-router.post("/notificationReaded", auth, userController.updateReadNotifications);
+router.post("/singleNotificationReaded", auth, userController.updateSingleReadNotifications);
 router.post("/resetNotification", auth, userController.notifySync);
 router.post("/resetChat", auth, userController.chatSync);
 
