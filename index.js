@@ -128,8 +128,8 @@ models.sequelize.sync({ focus: true }).then(function () {
             const fbtoken = await getAllAdminTokens()
             if (fbtoken?.length) {
               await sendFcmMessage(
-                "New Message",
-                `You Have New Message ${data.message != null ? data.message : "Attachment"}`,
+                `${data.message != null ? "New Message" : "New Attachment"}`,
+                `${data.message != null ? `You Have New Message ${data.message}` : "You Have New Attachment"}`,
                 fbtoken,
                 data.assignmentId
               );
@@ -138,8 +138,8 @@ models.sequelize.sync({ focus: true }).then(function () {
             for (const adminId of adminIds) {
               const add = await utils.addNotification(
                 adminId,
-                `You Have New Message ${data.message != null? data.message : "Attachment"}`,
-                "New Message",
+                `${data.message != null ? `You Have New Message ${data.message}` : "You Have New Attachment"}`,
+                `${data.message != null ? "New Message" : "New Attachment"}`,
                 data.assignmentId,
               );
             }
@@ -165,8 +165,8 @@ models.sequelize.sync({ focus: true }).then(function () {
               const fbtokenClient = await getTokensByUserId(user.room)
               if (fbtokenClient?.length) {
                 await sendFcmMessage(
-                  "New Message",
-                  `You Have New Message ${data.message}`,
+                  `${data.message != null ? "New Message" : "New Attachment"}`,
+                  `${data.message != null ? `You Have New Message ${data.message}` : "You Have New Attachment"}`,
                   fbtokenClient,
                   data.assignmentId
                 );
@@ -174,8 +174,8 @@ models.sequelize.sync({ focus: true }).then(function () {
               const userID = await utils.getUserIdByAssignmentId(user.room);
               await utils.addNotification(
                 userID,
-                `You Have New Message ${data.message != null ? data.message : "Attachment"}`,
-                "New Message",
+                `${data.message != null ? `You Have New Message ${data.message}` : "You Have New Attachment"}`,
+                `${data.message != null ? "New Message" : "New Attachment"}`,
                 user.room,
               );
             }
