@@ -63,9 +63,14 @@ const getAssignmentById = async (req, res) => {
     const assignments = await db.Assignment.findOne({
       where: { id: req.body.assignment_id },
     });
-    return res.status(200).json(response(200, "ok", "Successfull by ID", assignments));
+    const user = await db.User.findOne({
+      where:{id : assignments.userId}
+    })
+    const data = {assignments, user}
+    return res.status(200).json(response(200, "ok", "Successfull by ID", data));
   }
   catch (error) {
+    console.log(error);
     return res
       .status(500)
       .json(response(500, "BAD REQUEST", "Something Went Wrong", {}));

@@ -80,6 +80,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
+    const role = req.body.role;
     let user = await db.User.findOne({ where: { email: req.body.email } });
     if (!user)
       return res
@@ -97,15 +98,15 @@ const login = async (req, res) => {
       return res
         .status(401)
         .json(response(401, "error", "password is incorrect", {}));
-
-    if (user.role !== req.body.role)
+      const newRole = user.role === "subadmin" ? "admin" : user.role;
+    if (newRole !== req.body.role)
       return res
         .status(401)
         .json(
           response(
             401,
             "error",
-            user.role === "admin"
+            user.role === "admin" || user.role === "subadmin"
               ? "Admin cannot be login as User"
               : "User cannot be login as Admin",
             {}

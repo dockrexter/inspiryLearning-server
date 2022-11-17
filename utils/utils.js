@@ -1,6 +1,7 @@
 const fs = require("fs");
 const db = require("../models");
 const admin = require("firebase-admin");
+const { Op } = require("sequelize");
 const mkdir = (path) => {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
@@ -47,7 +48,10 @@ const getTokensByUserId = async (assignmentId) => {
 
 const getAllAdminIds = async () => {
   const users = await db.User.findAll({
-    where: { role: "admin" },
+    where: { [Op.or]: [
+      { role: "admin" },
+      { role: "subadmin" }
+    ]},
   });
   return users.map((user) => user.id);
 };
@@ -55,11 +59,15 @@ const getAllAdminIds = async () => {
 const getAllAdminTokens = async () => {
   try {
     const admins = await db.User.findAll({
-      where: { role: "admin" },
+      where: { [Op.or]: [
+        { role: "admin" },
+        { role: "subadmin" }
+      ] },
     });
-
+    console.log("Admin outside loop",admins)
     var tokens = [];
     for (let i = 0; i < admins.length; i++) {
+      console.log("CHECK ADMIN ID=>", admins[i].id);
       const token = await db.FCMToken.findAll({
         where: { userId: admins[i].id },
       });
@@ -68,8 +76,9 @@ const getAllAdminTokens = async () => {
           tokens.push(t.token);
         }
       }
-      return tokens;
     }
+    //console.log("Token",tokens);
+    return tokens;
   } catch (error) {
     console.error("Token: ", error);
   }

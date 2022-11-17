@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     amount: DataTypes.REAL,
     type: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
+    userName: DataTypes.STRING,
+    userRole: DataTypes.STRING,
     message: DataTypes.STRING,
     fileName: DataTypes.STRING,
     fileSize: DataTypes.INTEGER,
