@@ -122,8 +122,12 @@ models.sequelize.sync({ focus: true }).then(function () {
           await socket.broadcast.to(user.room).emit("error", error);
         } else {
           data.id = response.id;
+
+          console.log("For Payment",response);
+          await socket.emit('messageID', { id: response.id, type: data.type ,values: response });
           await socket.broadcast.to(user.room).emit("message", data);
-          await socket.emit('messageID', { id: response.id });
+          console.log("check id",response.id);
+          
           if ((await getUserRole(data.userId)) === "user") {
             const fbtoken = await getAllAdminTokens()
             if (fbtoken?.length) {
