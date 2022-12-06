@@ -152,7 +152,7 @@ const createUserAssignment = async (req, res) => {
       userId: req.user.id,
       subject: req.body.subject,
       summary: req.body.summary,
-      deadline: moment.utc(req.body.deadline).toDate().toISOString(),
+      deadline: moment(req.body.deadline).toDate().toISOString(),
     });
 
     for (const file of req.files) {
